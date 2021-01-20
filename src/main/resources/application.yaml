@@ -1,0 +1,26 @@
+
+
+app:
+  version: @project.version@
+  name: @project.name@
+
+logging:
+  level:
+    com:
+      sischi: debug
+
+selvebridge:
+  deadlock:
+    threshold: 60
+    watchdogInterval: 30
+  connection:
+    serialPort: /dev/ttyUSB0
+    reconnectInterval: 15
+    watchdogInterval: 60
+  mqtt:
+    broker: hostname
+    protocol: tcp
+    port: 1883
+    qos: EXACTLY_ONCE
+    retain: true
+    
