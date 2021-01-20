@@ -1,0 +1,11 @@
+
+# project settings
+.classpath
+.project
+.settings
+
+# ide
+.vscode
+
+# build process
+target/
