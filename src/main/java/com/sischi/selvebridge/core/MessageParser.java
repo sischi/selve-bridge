@@ -21,33 +21,51 @@ import org.springframework.stereotype.Component;
 
 /**
  * 
- * The @link{MessageParser} is responsible for converting the XML-Messages to corresponding Java POJOs and vice-versa.<br>
+ * The {@link MessageParser} is responsible for converting the XML-Messages to corresponding Java POJOs and vice-versa.<br>
  * Due to the limitations of the Selve-XML-specification, that you don't know the size of the receiving messages,
  * this parser collects all incoming bytes in one single message buffer. Every time some bytes are received the
  * message buffer will be analyzed and if a complete message is found it gets converted and the resulting object will
- * be published to the registered callbacks.<br>
+ * be published to the registered callbacks.
  * 
- * @author sischi
+ * @author Simon Schiller
  */
 @Component
 public class MessageParser implements HasLogger {
 
-    /** the actual instance of the xml object mapper */
+    /** the singleton instance of the xml object mapper */
     private static XmlMapper xmlMapper = null;
 
     /** the message buffer */
     private String messageBuffer = "";
 
+    /** list of all currently registered message handlers */
     private List<IncomingXmlMessageHandler> selveXmlMessageHandlers = new ArrayList<>();
 
+    /**
+     * This interface represents a contract to be treated as a message handler. Every implementation can
+     * be registered as such an hander and will be informed about new incoming messages.
+     */
 	public interface IncomingXmlMessageHandler {
+
+        /**
+         * handler method for incoming messages
+         * @param message the incoming {@link SelveXmlMessage}
+         */
 		void onIncomingXmlMessage(SelveXmlMessage message);
     }
     
+    /**
+     * getter for the registered {@link IncomingXmlMessageHandler}s
+     * @return a list of all currently registered {@link IncomingXmlMessageHandler}s
+     */
     public List<IncomingXmlMessageHandler> getIncomingXmlMessageHandlers() {
         return selveXmlMessageHandlers;
     }
 
+    /**
+     * adds the given handler to the ist of registered handlers
+     * @param handler the {@link IncomingXmlMessageHandler} that should be registered
+     */
     public void addIncomingXmlMessageHandler(IncomingXmlMessageHandler handler) {
         if(!getIncomingXmlMessageHandlers().contains(handler)) {
             getIncomingXmlMessageHandlers().add(handler);
@@ -66,6 +84,10 @@ public class MessageParser implements HasLogger {
     public static final String XML_METHOD_RESPONSE_END_TAG = "</methodResponse>";
 
 
+    /**
+     * static method to obtain the instance of the xml mapper used by this parser to (de)serialize the xml messages
+     * @return the singleton reference of the {@link XmlMapper} instance used to (de)serialize the xml messages
+     */
     public static XmlMapper getXmlMapper() {
         if(xmlMapper == null) {
             initializeXmlMapper();
@@ -73,6 +95,9 @@ public class MessageParser implements HasLogger {
         return xmlMapper;
     }
 
+    /**
+     * set up  static reference to the {@link XmlMapper} used to (de)serialize the xml messages
+     */
     protected static void initializeXmlMapper() {
         xmlMapper = new XmlMapper();
         // register custom (de-)serializer
@@ -84,12 +109,21 @@ public class MessageParser implements HasLogger {
         xmlMapper.registerModule(module);
     }
 
+    /**
+     * adding the given data to the message buffer and tries to interprete the current message buffer
+     * @param data the data that should be added to the message buffer
+     */
     public void processRawData(String data) {
         getLogger().trace("parsing data '{}'", data);
         messageBuffer += data;
         parseMessages();
     }
 
+    /**
+     * cleanup the given xml message by removing the unused xml header
+     * @param message the {@link String} representing the xml message
+     * @return a clean xml message
+     */
     protected String cleanXmlMessage(String message) {
         String cleaned = "";
         getLogger().trace("removing unused xml header from message '{}'", message);
@@ -98,8 +132,13 @@ public class MessageParser implements HasLogger {
         return cleaned;
     }
 
+    /**
+     * this method searches the message buffer for complete xml messages. If some are found, they
+     * are tried to be parsed and properly handled.
+     */
     protected void parseMessages() {
         getLogger().trace("trying to parse messageBuffer: '{}'", messageBuffer);
+        
         if (messageBuffer.contains(XML_MESSAGE_DELIMITER)) {
             getLogger().debug("messageBuffer contains end of message token '{}'",
                     Utils.escapeString(XML_MESSAGE_DELIMITER));
@@ -131,7 +170,10 @@ public class MessageParser implements HasLogger {
         }
     }
 
-    
+    /**
+     * handles any successfully parsed xml message by passing it to each of the registered handlers
+     * @param message the successsfully parsed {@link SelveXmlMessage}
+     */
     protected void handleIncomingMessage(SelveXmlMessage message) {
         for(IncomingXmlMessageHandler handler : getIncomingXmlMessageHandlers()) {
             try {
@@ -142,7 +184,11 @@ public class MessageParser implements HasLogger {
         }
     }
     
-
+    /**
+     * serializing the given message to a string
+     * @param message the {@link SelveXmlMessage} that should be serialized 
+     * @return the {@link String} representing the serialized message
+     */
     public String messageToXml(SelveXmlMessage message) {
         try {
             String xml = getXmlMapper().writeValueAsString(message);
@@ -154,6 +200,11 @@ public class MessageParser implements HasLogger {
         }
     }
 
+    /**
+     * deserializing the given xml string to the corresponding POJO
+     * @param xml the string representation of a xml message that should be deserialized
+     * @return the parsed {@link SelveXmlMessage}
+     */
     public SelveXmlMessage xmlToMessage(String xml) {
         try {
             SelveXmlMessage message = getXmlMapper().readValue(xml, SelveXmlMessage.class);
