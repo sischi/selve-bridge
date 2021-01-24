@@ -18,9 +18,11 @@ selvebridge:
     reconnectInterval: 15
     watchdogInterval: 60
   mqtt:
+    enabled: false
     broker: hostname
     protocol: tcp
     port: 1883
     qos: EXACTLY_ONCE
     retain: true
+    prefix: "selve/"
     

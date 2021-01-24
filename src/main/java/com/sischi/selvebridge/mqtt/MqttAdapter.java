@@ -12,9 +12,15 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
 import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
+
+@ConditionalOnProperty(
+    name = "selvebridge.mqtt.enabled",
+    havingValue = "true",
+    matchIfMissing = false
+)
 @Component
 public class MqttAdapter implements HasLogger {
 
@@ -40,13 +46,16 @@ public class MqttAdapter implements HasLogger {
         }
     }
 
-    //@Scheduled(fixedDelay = 10000)
-    protected void sendMessage() throws MqttPersistenceException, MqttException {
-        MqttMessage msg = new MqttMessage(new String("hello from selveBridge! count = '"+ count +"'").getBytes());
-        msg.setQos(mqttProperties.getQos().getQos());
-        msg.setRetained(mqttProperties.getRetain());
-        mqttClient.publish("selve/bridge/hello", msg);
-        getLogger().debug("mqtt message published!");
+    public void publish(String topic, String message) {
+        MqttMessage mqttMessage = new MqttMessage(message.getBytes());
+        mqttMessage.setQos(mqttProperties.getQos().getQos());
+        mqttMessage.setRetained(mqttProperties.getRetain());
+        try {
+            mqttClient.publish(topic, mqttMessage);
+            getLogger().debug("successfully published mqtt message '"+ message +"' on topic '"+ topic +"'!");
+        } catch (MqttException e) {
+            getLogger().error("could not publish mqtt message '{}' on topic '{}'!", message, topic);
+        }
     }
 
     private String buildConnectionString() {
