@@ -8,10 +8,10 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter;
 import com.sischi.selvebridge.core.util.HasLogger;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMessage;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodCall;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodParameter;
 
 public class SelveXmlMethodCallDeserializer extends StdDeserializer<SelveXmlMethodCall> implements HasLogger {
 

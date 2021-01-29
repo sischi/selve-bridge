@@ -1,4 +1,4 @@
-package com.sischi.selvebridge.core.properties;
+package com.sischi.selvebridge.core.entities.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +10,7 @@ public class MqttProperties {
     private String broker;
     private String protocol = "tcp";
     private Integer port = 1883;
-    private MqttQos qos = MqttQos.EXACTLY_ONCE;
+    private Integer qos = 0;
     private Boolean retain = true;
     private String topicPrefix = "selve";
 
@@ -38,11 +38,11 @@ public class MqttProperties {
         this.port = port;
     }
 
-    public MqttQos getQos() {
+    public Integer getQos() {
         return qos;
     }
 
-    public void setQos(MqttQos qos) {
+    public void setQos(Integer qos) {
         this.qos = qos;
     }
 

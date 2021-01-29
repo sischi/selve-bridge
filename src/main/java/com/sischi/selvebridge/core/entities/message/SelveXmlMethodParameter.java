@@ -1,4 +1,4 @@
-package com.sischi.selvebridge.core.xml.entity;
+package com.sischi.selvebridge.core.entities.message;
 
 
 

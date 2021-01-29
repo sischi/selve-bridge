@@ -3,9 +3,9 @@ package com.sischi.selvebridge.core.service;
 import com.sischi.selvebridge.core.Conversation;
 import com.sischi.selvebridge.core.ConversationManager;
 import com.sischi.selvebridge.core.SelveBridge;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.util.HasLogger;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMessage;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodCall;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

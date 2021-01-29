@@ -9,7 +9,7 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortInvalidPortException;
-import com.sischi.selvebridge.core.properties.ConnectionProperties;
+import com.sischi.selvebridge.core.entities.properties.ConnectionProperties;
 import com.sischi.selvebridge.core.util.HasLogger;
 
 import org.springframework.beans.factory.annotation.Autowired;

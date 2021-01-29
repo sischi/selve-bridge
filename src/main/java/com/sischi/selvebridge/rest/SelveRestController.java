@@ -1,7 +1,7 @@
 package com.sischi.selvebridge.rest;
 
 import com.sischi.selvebridge.core.Conversation;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodCall;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

@@ -1,8 +1,8 @@
-package com.sischi.selvebridge.mqtt.entity;
+package com.sischi.selvebridge.core.entities.control;
 
-import com.sischi.selvebridge.core.xml.enumerations.CommeoCommand;
+import com.sischi.selvebridge.core.entities.enumerations.CommeoCommand;
 
-public class MqttCommandPayload {
+public class CommeoCommandPayload {
 
     private CommeoCommand command;
     private Integer value;

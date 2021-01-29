@@ -2,7 +2,7 @@ package com.sischi.selvebridge.mqtt;
 
 import javax.annotation.PostConstruct;
 
-import com.sischi.selvebridge.core.properties.MqttProperties;
+import com.sischi.selvebridge.core.entities.properties.MqttProperties;
 import com.sischi.selvebridge.core.util.HasLogger;
 
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
@@ -55,7 +55,7 @@ public class MqttAdapter implements HasLogger {
 
     public void publish(String topic, String message) {
         MqttMessage mqttMessage = new MqttMessage(message.getBytes());
-        mqttMessage.setQos(mqttProperties.getQos().getQos());
+        mqttMessage.setQos(mqttProperties.getQos());
         mqttMessage.setRetained(mqttProperties.getRetain());
         try {
             mqttClient.publish(topic, mqttMessage);
@@ -75,7 +75,7 @@ public class MqttAdapter implements HasLogger {
 
     public void subscribe(String topic, IMqttMessageListener listener) {
         try {
-            mqttClient.subscribe(topic, mqttProperties.getQos().getQos(), listener);
+            mqttClient.subscribe(topic, mqttProperties.getQos(), listener);
             getLogger().info("successfully subscribed to topic '{}' for listener '{}'!", topic, listener.getClass().getSimpleName());
         } catch(Exception ex) {
             getLogger().error("could not subscribe to topic '{}' for listener '{}'!", topic, listener.getClass().getSimpleName(), ex);

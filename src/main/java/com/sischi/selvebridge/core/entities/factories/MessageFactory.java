@@ -1,10 +1,10 @@
-package com.sischi.selvebridge.core.xml.factory;
+package com.sischi.selvebridge.core.entities.factories;
 
+import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter.ParameterType;
 import com.sischi.selvebridge.core.util.Validator;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMessage;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodCall;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodParameter;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodParameter.ParameterType;
 
 public class MessageFactory {
 

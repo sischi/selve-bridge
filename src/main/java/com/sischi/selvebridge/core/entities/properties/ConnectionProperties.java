@@ -1,4 +1,4 @@
-package com.sischi.selvebridge.core.properties;
+package com.sischi.selvebridge.core.entities.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;

@@ -3,9 +3,9 @@ package com.sischi.selvebridge.mqtt;
 import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sischi.selvebridge.core.properties.MqttProperties;
+import com.sischi.selvebridge.core.entities.control.CommeoCommandPayload;
+import com.sischi.selvebridge.core.entities.properties.MqttProperties;
 import com.sischi.selvebridge.core.util.HasLogger;
-import com.sischi.selvebridge.mqtt.entity.MqttCommandPayload;
 
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -73,9 +73,9 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
             return;
         }
 
-        MqttCommandPayload payload = null;
+        CommeoCommandPayload payload = null;
         try {
-            payload = om.readValue(message, MqttCommandPayload.class);
+            payload = om.readValue(message, CommeoCommandPayload.class);
         } catch(Exception ex) {
             getLogger().error("could not parse payload '{}' to command!", message, ex);
             return;
@@ -84,7 +84,7 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
     }
 
 
-    protected void processCommand(int aktorId, MqttCommandPayload commandPayload) {
+    protected void processCommand(int aktorId, CommeoCommandPayload commandPayload) {
         getLogger().debug("processing command '{}' for aktor id '{}'", commandPayload, aktorId);
 
         String message = "{\"position\":"+ commandPayload.getValue() +"}";

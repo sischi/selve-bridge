@@ -7,12 +7,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMessage;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodCall;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodParameter;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodResponse;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMessage.MessageType;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodParameter.ParameterType;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMessage.MessageType;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter.ParameterType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

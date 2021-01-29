@@ -1,4 +1,4 @@
-package com.sischi.selvebridge.core.xml.enumerations;
+package com.sischi.selvebridge.core.entities.enumerations;
 
 
 

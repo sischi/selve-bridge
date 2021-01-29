@@ -2,8 +2,8 @@ package com.sischi.selvebridge.core;
 
 import java.time.LocalDateTime;
 
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodCall;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodResponse;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
 
 public class Conversation {
 

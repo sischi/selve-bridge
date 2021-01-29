@@ -4,9 +4,9 @@ import javax.annotation.PostConstruct;
 
 import com.sischi.selvebridge.core.SelveBridge.DeadlockHandler;
 import com.sischi.selvebridge.core.SelveBridge.SelveXmlMessageHandler;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
 import com.sischi.selvebridge.core.util.HasLogger;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodCall;
-import com.sischi.selvebridge.core.xml.entity.SelveXmlMethodResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
