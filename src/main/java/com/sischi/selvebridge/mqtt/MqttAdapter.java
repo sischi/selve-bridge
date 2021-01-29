@@ -5,12 +5,11 @@ import javax.annotation.PostConstruct;
 import com.sischi.selvebridge.core.properties.MqttProperties;
 import com.sischi.selvebridge.core.util.HasLogger;
 
+import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.MqttPersistenceException;
-import org.eclipse.paho.client.mqttv3.MqttSecurityException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
@@ -26,19 +25,27 @@ public class MqttAdapter implements HasLogger {
 
     @Autowired private MqttProperties mqttProperties;
     private MqttClient mqttClient = null;
+    private String connectionString = null;
+
+
 
     protected int count = 0;
 
     @PostConstruct
-    protected void init() throws MqttSecurityException, MqttException {
-        mqttClient = new MqttClient(buildConnectionString(), "selvebridge");
-        MqttConnectOptions options = new MqttConnectOptions();
-        options.setAutomaticReconnect(true);
-        options.setCleanSession(true);
-        options.setConnectionTimeout(10);
-        mqttClient.connect(options);
+    protected void init() {
+        initConnectionString();
+        try {
+            mqttClient = new MqttClient(connectionString, "selvebridge");
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setAutomaticReconnect(true);
+            options.setCleanSession(true);
+            options.setConnectionTimeout(10);
+            mqttClient.connect(options);
+        } catch(Exception ex) {
+            getLogger().error("could not connect to mqtt broker '{}'! something went wrong.", connectionString, ex);
+        }
 
-        if(mqttClient.isConnected()) {
+        if(isConnected()) {
             getLogger().debug("mqtt client connected succesfully!");
         }
         else {
@@ -58,12 +65,28 @@ public class MqttAdapter implements HasLogger {
         }
     }
 
-    private String buildConnectionString() {
-        return mqttProperties.getProtocol()
+    private void initConnectionString() {
+        connectionString = mqttProperties.getProtocol()
                     + "://"
                     + mqttProperties.getBroker()
                     + ":"
                     + mqttProperties.getPort();
+    }
+
+    public void subscribe(String topic, IMqttMessageListener listener) {
+        try {
+            mqttClient.subscribe(topic, mqttProperties.getQos().getQos(), listener);
+            getLogger().info("successfully subscribed to topic '{}' for listener '{}'!", topic, listener.getClass().getSimpleName());
+        } catch(Exception ex) {
+            getLogger().error("could not subscribe to topic '{}' for listener '{}'!", topic, listener.getClass().getSimpleName(), ex);
+        }
+    }
+
+    protected boolean isConnected() {
+        if(mqttClient != null && mqttClient.isConnected()) {
+            return true;
+        }
+        return false;
     }
 
 }

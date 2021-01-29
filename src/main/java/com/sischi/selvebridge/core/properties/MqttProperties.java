@@ -12,6 +12,7 @@ public class MqttProperties {
     private Integer port = 1883;
     private MqttQos qos = MqttQos.EXACTLY_ONCE;
     private Boolean retain = true;
+    private String topicPrefix = "selve";
 
     public String getBroker() {
         return broker;
@@ -51,5 +52,13 @@ public class MqttProperties {
 
     public void setRetain(Boolean retain) {
         this.retain = retain;
+    }
+
+    public String getTopicPrefix() {
+        return topicPrefix;
+    }
+
+    public void setTopicPrefix(String topicPrefix) {
+        this.topicPrefix = topicPrefix;
     }
 }
