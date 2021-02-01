@@ -2,9 +2,21 @@ package com.sischi.selvebridge.mqtt;
 
 import javax.annotation.PostConstruct;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sischi.selvebridge.core.entities.control.CommeoCommandPayload;
+import com.sischi.selvebridge.core.Conversation;
+import com.sischi.selvebridge.core.SelveBridge;
+import com.sischi.selvebridge.core.SelveBridge.SelveXmlMessageHandler;
+import com.sischi.selvebridge.core.entities.commeo.CommeoCommandPayload;
+import com.sischi.selvebridge.core.entities.commeo.CommeoDeviceState;
+import com.sischi.selvebridge.core.entities.enumerations.CommeoCommandType;
+import com.sischi.selvebridge.core.entities.factories.MessageFactory;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
+import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
 import com.sischi.selvebridge.core.entities.properties.MqttProperties;
+import com.sischi.selvebridge.core.service.CommeoSelveService;
+import com.sischi.selvebridge.core.service.SelveService;
 import com.sischi.selvebridge.core.util.HasLogger;
 
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
@@ -13,45 +25,49 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
-
-@ConditionalOnProperty(
-    name = "selvebridge.mqtt.enabled",
-    havingValue = "true",
-    matchIfMissing = false
-)
+@ConditionalOnProperty(name = "selvebridge.mqtt.enabled", havingValue = "true", matchIfMissing = false)
 @Component
-public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListener {
+public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListener, SelveXmlMessageHandler {
 
-    private static String KEYWORD_COMMAND = "cmnd";
-    private static String KEYWORD_STATE = "state";
-    private static String KEYWORD_INFO = "info";
-    
-    private static String PROTOCOL = "commeo";
+    private static final String KEYWORD_COMMAND = "cmnd";
+    private static final String KEYWORD_STATE = "state";
+    private static final String KEYWORD_INFO = "info";
+
+    private static final String PROTOCOL = "commeo";
+    private static final String RESULT_CALLBACK_METHODNAME = "selve.GW.command.result";
 
     private String TOPIC_COMMAND = null;
-    
-    @Autowired private MqttProperties mqttProperties;
-    @Autowired private MqttAdapter mqttAdapter;
 
-    @Autowired private ObjectMapper om;
+    @Autowired
+    private MqttProperties mqttProperties;
+    @Autowired
+    private MqttAdapter mqttAdapter;
+
+    @Autowired
+    private ObjectMapper om;
+
+    @Autowired
+    private SelveBridge selveBridge;
+    @Autowired
+    private CommeoSelveService selveService;
 
     @PostConstruct
     public void init() {
         initTopics();
-        makeSubscription();
+        makeSubscriptions();
     }
-
 
     private void initTopics() {
-        TOPIC_COMMAND = mqttProperties.getTopicPrefix() +"/"+ PROTOCOL +"/+/"+ KEYWORD_COMMAND;
+        TOPIC_COMMAND = mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/+/" + KEYWORD_COMMAND;
     }
 
-    private String generateStateTopic(int aktorId) {
-        return mqttProperties.getTopicPrefix() +"/"+ PROTOCOL +"/"+ aktorId +"/"+ KEYWORD_STATE;
+    private String generateStateTopic(int deviceId) {
+        return mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/" + deviceId + "/" + KEYWORD_STATE;
     }
 
-    private void makeSubscription() {
+    private void makeSubscriptions() {
         mqttAdapter.subscribe(TOPIC_COMMAND, this);
+        selveBridge.addSelveXmlMessageHandler(this);
     }
 
     @Override
@@ -60,15 +76,15 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
         getLogger().debug("received message '{}' on topic '{}'", message, topic);
 
         // remove the irrelevant part of the topic
-        topic = topic.replace(mqttProperties.getTopicPrefix() +"/"+ PROTOCOL +"/", "");
+        topic = topic.replace(mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/", "");
 
-        // [aktorId, KEYWORD_COMMAND]
+        // [deviceId, KEYWORD_COMMAND]
         String[] chunks = topic.split("/");
-        Integer aktorId = null;
-        
+        Integer deviceId = null;
+
         try {
-            aktorId = Integer.parseInt(chunks[0]);
-        } catch(NumberFormatException ex) {
+            deviceId = Integer.parseInt(chunks[0]);
+        } catch (NumberFormatException ex) {
             getLogger().error("could not parse '{}' to aktor id!", chunks[0]);
             return;
         }
@@ -76,28 +92,34 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
         CommeoCommandPayload payload = null;
         try {
             payload = om.readValue(message, CommeoCommandPayload.class);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             getLogger().error("could not parse payload '{}' to command!", message, ex);
             return;
         }
-        processCommand(aktorId, payload);
+        processCommand(deviceId, payload);
     }
 
+    protected void processCommand(int deviceId, CommeoCommandPayload commandPayload) {
+        getLogger().debug("processing command '{}' for aktor id '{}'", commandPayload, deviceId);
 
-    protected void processCommand(int aktorId, CommeoCommandPayload commandPayload) {
-        getLogger().debug("processing command '{}' for aktor id '{}'", commandPayload, aktorId);
-
-        String message = "{\"position\":"+ commandPayload.getValue() +"}";
+        selveService.sendCommand(deviceId, commandPayload);
+        CommeoDeviceState deviceState = selveService.requestDeviceState(deviceId);
         try {
-            mqttAdapter.publish(generateStateTopic(aktorId), message);
-        } catch(Exception ex) {
-            getLogger().error("something went wrong publishing message '{}' on topic '{}'", message, generateStateTopic(aktorId), ex);
+            mqttAdapter.publish(generateStateTopic(deviceId), om.writeValueAsString(deviceState));
+        } catch (JsonProcessingException ex) {
+            getLogger().error("could not publish device state '{}'!", deviceState, ex);
         }
     }
 
 
-    protected void publishError(String message) {
+    @Override
+    public void onMethodResponse(SelveXmlMethodResponse response) { /* not intereseted in method responses */ }
 
+    @Override
+    public void onMethodCall(SelveXmlMethodCall call) {
+        if(RESULT_CALLBACK_METHODNAME.equals(call.getMethodName())) {
+            getLogger().info("received command result: '{}'", call.toString());
+        }
     }
     
 }

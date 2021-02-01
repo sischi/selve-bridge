@@ -1,4 +1,4 @@
-package com.sischi.selvebridge.core.entities.control;
+package com.sischi.selvebridge.core.entities.commeo;
 
 import com.sischi.selvebridge.core.entities.enumerations.CommeoCommand;
 

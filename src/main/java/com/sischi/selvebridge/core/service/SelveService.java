@@ -30,7 +30,7 @@ public class SelveService implements HasLogger {
     public synchronized Conversation sendSynchronously(SelveXmlMethodCall methodCall) {
         Conversation conversation = conversationManager.startConversation(methodCall);
         if (conversation == null) {
-            getLogger().error("could not start conversation! the method call will not be send!");
+            getLogger().error("could not start conversation! the method call '{}' will not be send!", methodCall);
             return null;
         }
 
@@ -62,7 +62,5 @@ public class SelveService implements HasLogger {
 
         return conversation;
     }
-
-    
 
 }
