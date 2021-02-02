@@ -1,7 +1,6 @@
 package com.sischi.selvebridge.core;
 
 import java.nio.charset.Charset;
-import java.util.concurrent.Semaphore;
 
 import javax.annotation.PostConstruct;
 
@@ -9,6 +8,8 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortInvalidPortException;
+import com.sischi.selvebridge.core.ConnectionWatchdog.ConnectionWatchdogHandler;
+import com.sischi.selvebridge.core.ReconnectThread.ReconnectThreadHandler;
 import com.sischi.selvebridge.core.entities.properties.ConnectionProperties;
 import com.sischi.selvebridge.core.util.HasLogger;
 
@@ -26,7 +27,7 @@ import org.springframework.stereotype.Component;
  * @author sischi
  */
 @Component
-public class ConnectionManager implements HasLogger, SerialPortDataListener {
+public class ConnectionManager implements HasLogger, SerialPortDataListener, ConnectionWatchdogHandler, ReconnectThreadHandler {
 
     @Autowired
     private ConnectionProperties connectionProperties;
@@ -35,10 +36,9 @@ public class ConnectionManager implements HasLogger, SerialPortDataListener {
 
     protected DataReceivedHandler dataReceivedHandler;
 
-    private Thread reconnectThread = null;
-    private Thread connectionWatchdog = null;
-
-    private Semaphore reconnectMutex = new Semaphore(1);
+    private ReconnectThread reconnectThread = null;
+    
+    private ConnectionWatchdog connectionWatchdog = null;
 
     /**
      * Interface that defines a callback to handle data received on the serial port
@@ -59,75 +59,26 @@ public class ConnectionManager implements HasLogger, SerialPortDataListener {
      */
     @PostConstruct
     protected void postConstruct() {
+        reconnectThread = new ReconnectThread(
+                "serial-recon",
+                connectionProperties.getReconnectInterval(),
+                this
+            );
+        connectionWatchdog = new ConnectionWatchdog(
+                "serial-watch",
+                connectionProperties.getWatchdogInterval(),
+                this
+            );
         connect();
         if (isConnected()) {
-            startConnectionWatchdog();
-        }
-        else {
-            startReconnectThread();
-        }
-
-    }
-
-    protected void startReconnectThread() {
-        if (connectionProperties.getReconnectInterval() <= 0) {
-            getLogger().warn("reconnect thread is disabled due to crresponding connection property is set to '"+ connectionProperties.getReconnectInterval() +"'!");
-            return;
-        }
-
-        if (reconnectMutex.tryAcquire()) {
-            if (reconnectThread == null || !reconnectThread.isAlive()) {
-                reconnectThread = new Thread(() -> {
-                    getLogger().debug("reconnect thread started ...");
-                    while (!isConnected()) {
-                        getLogger().info("serial port is still not connected, so will try again soon ...");
-                        disconnect();
-                        try {
-                            getLogger().debug("waiting for "+ connectionProperties.getReconnectInterval() +" sec ...");
-                            Thread.sleep(connectionProperties.getReconnectInterval() * 1000);
-                        } catch (InterruptedException e) {
-                            getLogger().warn("reconnect thread got interrupted!", e);
-                        }
-                        connect();
-                    }
-                    getLogger().debug("serial port connected successfully. finishing reconnect thread and starting connection watchdog!");
-                    startConnectionWatchdog();
-                });
-                reconnectThread.setName("reconnect");
-                reconnectThread.start();
-            } else {
-                getLogger().info("a reconnect thread is already running!");
-            }
-            reconnectMutex.release();
-        } else {
-            getLogger().info("could not acquire reconnect mutex");
-        }
-    }
-
-    private void startConnectionWatchdog() {
-        if (connectionProperties.getWatchdogInterval() <= 0) {
-            getLogger().warn("connection watchdog is disabled due to corresponding connection property is set to '"+ connectionProperties.getReconnectInterval() +"'!");
-            return;
-        }
-
-        if (connectionWatchdog == null || !connectionWatchdog.isAlive()) {
-            connectionWatchdog = new Thread(() -> {
-                getLogger().info("connection watchdog started ...");
-                while (isConnected()) {
-                    getLogger().debug("the connection to the serial port is still alive, so nothing to do here");
-                    try {
-                        Thread.sleep(connectionProperties.getWatchdogInterval() * 1000);
-                    } catch (InterruptedException e) {
-                        getLogger().warn("connection watchdog got interrupted!", e);
-                    }
-                }
-                getLogger().warn("the connection to the serial port lost! starting reconnect thread.");
-                startReconnectThread();
-            });
-            connectionWatchdog.setName("con-watch");
             connectionWatchdog.start();
         }
+        else {
+            reconnectThread.start();
+        }
+
     }
+
 
     /**
      * set up the connection parameter for the serial connection with the information
@@ -155,7 +106,8 @@ public class ConnectionManager implements HasLogger, SerialPortDataListener {
     /**
      * set up the connection by configuring the serial port and tries to open the serial connection.
      */
-    protected void connect() {
+    @Override
+    public void connect() {
         initalizeSerialPort();
         if (serialPort != null) {
             boolean success = serialPort.openPort();
@@ -171,7 +123,8 @@ public class ConnectionManager implements HasLogger, SerialPortDataListener {
     /**
      * disconnect and reset the serial port
      */
-    protected void disconnect() {
+    @Override
+    public void disconnect() {
         if(isConnected()) {
             getLogger().debug("the serial port is currently connected, so disconnecting it.");
             serialPort.closePort();
@@ -229,6 +182,21 @@ public class ConnectionManager implements HasLogger, SerialPortDataListener {
         else {
             getLogger().warn("no handler for incoming data registered! so ignoring received data '{}'", data);
         }
+    }
+
+    @Override
+    public boolean checkConnection() {
+        return isConnected();
+    }
+
+    @Override
+    public void handleLostConnection() {
+        reconnectThread.start();
+    }
+
+    @Override
+    public void handleSuccessfulReconnect() {
+        connectionWatchdog.start();
     }
 
 }

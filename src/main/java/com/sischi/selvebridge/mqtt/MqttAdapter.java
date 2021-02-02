@@ -2,6 +2,10 @@ package com.sischi.selvebridge.mqtt;
 
 import javax.annotation.PostConstruct;
 
+import com.sischi.selvebridge.core.ConnectionWatchdog;
+import com.sischi.selvebridge.core.ReconnectThread;
+import com.sischi.selvebridge.core.ConnectionWatchdog.ConnectionWatchdogHandler;
+import com.sischi.selvebridge.core.ReconnectThread.ReconnectThreadHandler;
 import com.sischi.selvebridge.core.entities.properties.MqttProperties;
 import com.sischi.selvebridge.core.util.HasLogger;
 
@@ -21,35 +25,40 @@ import org.springframework.stereotype.Component;
     matchIfMissing = false
 )
 @Component
-public class MqttAdapter implements HasLogger {
+public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, ReconnectThreadHandler {
 
     @Autowired private MqttProperties mqttProperties;
     private MqttClient mqttClient = null;
     private String connectionString = null;
 
-
+    private ConnectionWatchdog connectionWatchdog = null;
+    private ReconnectThread reconnectThread = null;
 
     protected int count = 0;
 
     @PostConstruct
     protected void init() {
+        reconnectThread = new ReconnectThread(
+                "mqtt-recon",
+                30,
+                this
+            );
+        connectionWatchdog = new ConnectionWatchdog(
+                "mqtt-watch",
+                60,
+                this
+            );
+
         initConnectionString();
-        try {
-            mqttClient = new MqttClient(connectionString, "selvebridge");
-            MqttConnectOptions options = new MqttConnectOptions();
-            options.setAutomaticReconnect(true);
-            options.setCleanSession(true);
-            options.setConnectionTimeout(10);
-            mqttClient.connect(options);
-        } catch(Exception ex) {
-            getLogger().error("could not connect to mqtt broker '{}'! something went wrong.", connectionString, ex);
-        }
+        connect();
 
         if(isConnected()) {
             getLogger().debug("mqtt client connected succesfully!");
+            connectionWatchdog.start();
         }
         else {
             getLogger().error("mqtt client connection FAILED!!");
+            reconnectThread.start();
         }
     }
 
@@ -88,5 +97,48 @@ public class MqttAdapter implements HasLogger {
         }
         return false;
     }
+
+    @Override
+    public void connect() {
+        try {
+            mqttClient = new MqttClient(connectionString, "selvebridge");
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setAutomaticReconnect(true);
+            options.setCleanSession(true);
+            options.setConnectionTimeout(10);
+            mqttClient.connect(options);
+        } catch(Exception ex) {
+            getLogger().error("could not connect to mqtt broker '{}'! something went wrong.", connectionString, ex);
+        }
+    }
+
+    @Override
+    public void disconnect() {
+        if(isConnected()) {
+            try {
+                mqttClient.disconnect();
+            } catch (MqttException ex) {
+                getLogger().warn("could not disconnect from mqtt broker!", ex);
+            }
+        }
+        mqttClient = null;
+    }
+
+    @Override
+    public void handleSuccessfulReconnect() {
+        connectionWatchdog.start();
+    }
+
+    @Override
+    public boolean checkConnection() {
+        return isConnected();
+    }
+
+    @Override
+    public void handleLostConnection() {
+        reconnectThread.start();
+    }
+
+    
 
 }
