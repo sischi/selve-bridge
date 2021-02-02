@@ -2,8 +2,6 @@ package com.sischi.selvebridge.core.service;
 
 import java.util.List;
 
-import javax.swing.text.Position;
-
 import com.sischi.selvebridge.core.Conversation;
 import com.sischi.selvebridge.core.entities.commeo.CommeoCommandPayload;
 import com.sischi.selvebridge.core.entities.commeo.CommeoDeviceState;
@@ -14,7 +12,6 @@ import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
-import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter.ParameterType;
 import com.sischi.selvebridge.core.util.Utils;
 
 import org.springframework.stereotype.Component;

@@ -1,5 +1,8 @@
 package com.sischi.selvebridge.mqtt;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import com.sischi.selvebridge.core.ConnectionWatchdog;
@@ -9,7 +12,6 @@ import com.sischi.selvebridge.core.ReconnectThread.ReconnectThreadHandler;
 import com.sischi.selvebridge.core.entities.properties.MqttProperties;
 import com.sischi.selvebridge.core.util.HasLogger;
 
-import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -33,6 +35,8 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
 
     private ConnectionWatchdog connectionWatchdog = null;
     private ReconnectThread reconnectThread = null;
+
+    private List<MqttSubscription> subscriptions = new ArrayList<>();
 
     protected int count = 0;
 
@@ -82,12 +86,33 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
                     + mqttProperties.getPort();
     }
 
-    public void subscribe(String topic, IMqttMessageListener listener) {
+    public void subscribe(MqttSubscription subscription) {
+        subscriptions.add(subscription);
+        doSubscribe(subscription);
+    }
+
+    protected void restoreSubscriptions() {
+        for(MqttSubscription sub : subscriptions) {
+            doSubscribe(sub);
+        }
+    }
+
+    protected void unsubscribeAll() {
+        for(MqttSubscription sub : subscriptions) {
+            try {
+                mqttClient.unsubscribe(sub.getTopic());
+            } catch (MqttException e) {
+                getLogger().warn("unable to unsubscribe mqtt topic '{}'!", sub.getTopic(), e);
+            }
+        }
+    }
+
+    protected void doSubscribe(MqttSubscription subscription) {
         try {
-            mqttClient.subscribe(topic, mqttProperties.getQos(), listener);
-            getLogger().info("successfully subscribed to topic '{}' for listener '{}'!", topic, listener.getClass().getSimpleName());
+            mqttClient.subscribe(subscription.getTopic(), mqttProperties.getQos(), subscription.getListener());
+            getLogger().info("successfully subscribed to topic '{}' for listener '{}'!", subscription.getTopic(), subscription.getListener().getClass().getSimpleName());
         } catch(Exception ex) {
-            getLogger().error("could not subscribe to topic '{}' for listener '{}'!", topic, listener.getClass().getSimpleName(), ex);
+            getLogger().error("could not subscribe to topic '{}' for listener '{}'!", subscription.getTopic(), subscription.getListener().getClass().getSimpleName(), ex);
         }
     }
 
@@ -115,6 +140,7 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
     @Override
     public void disconnect() {
         if(isConnected()) {
+            unsubscribeAll();
             try {
                 mqttClient.disconnect();
             } catch (MqttException ex) {
@@ -127,6 +153,7 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
     @Override
     public void handleSuccessfulReconnect() {
         connectionWatchdog.start();
+        restoreSubscriptions();
     }
 
     @Override

@@ -4,19 +4,14 @@ import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sischi.selvebridge.core.Conversation;
 import com.sischi.selvebridge.core.SelveBridge;
 import com.sischi.selvebridge.core.SelveBridge.SelveXmlMessageHandler;
 import com.sischi.selvebridge.core.entities.commeo.CommeoCommandPayload;
 import com.sischi.selvebridge.core.entities.commeo.CommeoDeviceState;
-import com.sischi.selvebridge.core.entities.enumerations.CommeoCommandType;
-import com.sischi.selvebridge.core.entities.factories.MessageFactory;
-import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
 import com.sischi.selvebridge.core.entities.properties.MqttProperties;
 import com.sischi.selvebridge.core.service.CommeoSelveService;
-import com.sischi.selvebridge.core.service.SelveService;
 import com.sischi.selvebridge.core.util.HasLogger;
 
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
@@ -31,7 +26,6 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
 
     private static final String KEYWORD_COMMAND = "cmnd";
     private static final String KEYWORD_STATE = "state";
-    private static final String KEYWORD_INFO = "info";
 
     private static final String PROTOCOL = "commeo";
     private static final String RESULT_CALLBACK_METHODNAME = "selve.GW.command.result";
@@ -66,7 +60,7 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
     }
 
     private void makeSubscriptions() {
-        mqttAdapter.subscribe(TOPIC_COMMAND, this);
+        mqttAdapter.subscribe(new MqttSubscription(TOPIC_COMMAND, this));
         selveBridge.addSelveXmlMessageHandler(this);
     }
 
