@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import com.sischi.selvebridge.core.entities.enumerations.MethodNames;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
@@ -178,6 +179,11 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 	
 	public void handleMethodCall(SelveXmlMethodCall message) {
 		getLogger().debug("processing incoming method call by invoking '{}' registered handlers", getSelveXmlMessageHandlers().size());
+		try {
+			handleIncomingLogEvent(message);
+		} catch(Exception ex) {
+			getLogger().warn("unhandled exception in event log handler for message '{}'", message, ex);
+		}
 		for(SelveXmlMessageHandler handler : getSelveXmlMessageHandlers()) {
 			try {
 				handler.onMethodCall(message);
@@ -195,6 +201,26 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 				handler.onMethodResponse(message);
 			} catch(Exception ex) {
 				getLogger().warn("unhandled exception in method response handler for message '{}'", message, ex);
+			}
+		}
+	}
+
+	protected void handleIncomingLogEvent(SelveXmlMethodCall message) {
+		if(MethodNames.EVENT_LOG.equals(message.getMethodName())) {
+			String log = "GW: [time='"+ message.getParameters().get(1).getValue() +"', "+
+							"code='"+ message.getParameters().get(2).getValue() +"', "+
+							"value='"+ message.getParameters().get(3).getValue() +"', "+
+							"description='"+ message.getParameters().get(4).getValue() +"']";
+			switch ((int) message.getParameters().get(0).getValue()) {
+				case 1:
+					getLogger().warn(log);
+					break;
+				case 2:
+					getLogger().error(log);
+					break;
+				default:
+					getLogger().info(log);
+					break;
 			}
 		}
 	}
