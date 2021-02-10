@@ -42,50 +42,50 @@ public class GwDeviceController extends AbstractSelveRestController {
     }
 
     @GetMapping("/getInfo")
-    public Conversation getInfo(@RequestParam(required = true) Integer aktorId) {
-        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Device.getInfo(aktorId));
+    public Conversation getInfo(@RequestParam(required = true) Integer deviceId) {
+        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Device.getInfo(deviceId));
         checkConversation(conversation);
         return conversation;
     }
 
     @GetMapping("/save")
-    public Conversation save(@RequestParam(required = true) Integer aktorId) {
-        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Device.save(aktorId));
+    public Conversation save(@RequestParam(required = true) Integer deviceId) {
+        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Device.save(deviceId));
         checkConversation(conversation);
         return conversation;
     }
 
     @GetMapping("/getValues")
-    public Conversation getValues(@RequestParam(required = true) Integer aktorId) {
-        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Device.getValues(aktorId));
+    public Conversation getValues(@RequestParam(required = true) Integer deviceId) {
+        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Device.getValues(deviceId));
         checkConversation(conversation);
         return conversation;
     }
 
     @GetMapping("/setFunction")
-    public Conversation setFunction(@RequestParam(required = true) Integer aktorId, @RequestParam(required = true) Integer function) {
-        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Device.setFunction(aktorId, function));
+    public Conversation setFunction(@RequestParam(required = true) Integer deviceId, @RequestParam(required = true) Integer function) {
+        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Device.setFunction(deviceId, function));
         checkConversation(conversation);
         return conversation;
     }
 
     @GetMapping("/setLabel")
-    public Conversation setLabel(@RequestParam(required = true) Integer aktorId, @RequestParam(required = true) String label) {
-        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Device.setLabel(aktorId, label));
+    public Conversation setLabel(@RequestParam(required = true) Integer deviceId, @RequestParam(required = true) String label) {
+        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Device.setLabel(deviceId, label));
         checkConversation(conversation);
         return conversation;
     }
 
     @GetMapping("/setType")
-    public Conversation setType(@RequestParam(required = true) Integer aktorId, @RequestParam(required = true) Integer type) {
-        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Device.setType(aktorId, type));
+    public Conversation setType(@RequestParam(required = true) Integer deviceId, @RequestParam(required = true) Integer type) {
+        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Device.setType(deviceId, type));
         checkConversation(conversation);
         return conversation;
     }
 
     @GetMapping("/delete")
-    public Conversation delete(@RequestParam Integer aktorId) {
-        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Device.delete(aktorId));
+    public Conversation delete(@RequestParam Integer deviceId) {
+        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Device.delete(deviceId));
         checkConversation(conversation);
         return conversation;
     }

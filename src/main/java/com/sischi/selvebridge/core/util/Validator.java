@@ -3,8 +3,8 @@ package com.sischi.selvebridge.core.util;
 public class Validator {
     
 
-    public static void validateCommeoAktorId(int aktorId) {
-        if(aktorId < 0 || aktorId > 63) throw new IllegalArgumentException("aktorId must be between 0 and 63, but found '"+ aktorId +"'");
+    public static void validateCommeoDeviceId(int deviceId) {
+        if(deviceId < 0 || deviceId > 63) throw new IllegalArgumentException("deviceId must be between 0 and 63, but found '"+ deviceId +"'");
     }
 
 	public static void validateCommeoGroupId(int groupId) {

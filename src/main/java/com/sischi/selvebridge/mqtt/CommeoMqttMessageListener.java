@@ -79,7 +79,7 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
         try {
             deviceId = Integer.parseInt(chunks[0]);
         } catch (NumberFormatException ex) {
-            getLogger().error("could not parse '{}' to aktor id!", chunks[0]);
+            getLogger().error("could not parse '{}' to device id!", chunks[0]);
             return;
         }
 
@@ -94,7 +94,7 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
     }
 
     protected void processCommand(int deviceId, CommeoCommandPayload commandPayload) {
-        getLogger().debug("processing command '{}' for aktor id '{}'", commandPayload, deviceId);
+        getLogger().debug("processing command '{}' for device id '{}'", commandPayload, deviceId);
 
         selveService.sendCommand(deviceId, commandPayload);
         CommeoDeviceState deviceState = selveService.requestDeviceState(deviceId);

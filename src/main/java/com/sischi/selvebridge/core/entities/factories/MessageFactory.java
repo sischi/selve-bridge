@@ -48,78 +48,78 @@ public class MessageFactory {
             return new SelveXmlMethodCall()
                 .withMethodName("selve.GW.device.scanResult");
         }
-        public static SelveXmlMessage getInfo(int aktorId) {
-            Validator.validateCommeoAktorId(aktorId);
+        public static SelveXmlMessage getInfo(int deviceId) {
+            Validator.validateCommeoDeviceId(deviceId);
             return new SelveXmlMethodCall()
                 .withMethodName("selve.GW.device.getInfo")
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, aktorId)
+                    new SelveXmlMethodParameter(ParameterType.INT, deviceId)
                 );
         }
-        public static SelveXmlMessage save(int aktorId) {
-            Validator.validateCommeoAktorId(aktorId);
+        public static SelveXmlMessage save(int deviceId) {
+            Validator.validateCommeoDeviceId(deviceId);
             return new SelveXmlMethodCall()
                 .withMethodName("selve.GW.device.save")
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, aktorId)
+                    new SelveXmlMethodParameter(ParameterType.INT, deviceId)
                 );
         }
-        public static SelveXmlMessage getValues(int aktorId) {
-            Validator.validateCommeoAktorId(aktorId);
+        public static SelveXmlMessage getValues(int deviceId) {
+            Validator.validateCommeoDeviceId(deviceId);
             return new SelveXmlMethodCall()
                 .withMethodName("selve.GW.device.getValues")
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, aktorId)
+                    new SelveXmlMethodParameter(ParameterType.INT, deviceId)
                 );
         }
         public static SelveXmlMessage getIds() {
             return new SelveXmlMethodCall()
                 .withMethodName("selve.GW.device.getIDs");
         }
-        public static SelveXmlMessage setFunction(int aktorId, int function) {
-            Validator.validateCommeoAktorId(aktorId);
+        public static SelveXmlMessage setFunction(int deviceId, int function) {
+            Validator.validateCommeoDeviceId(deviceId);
             return new SelveXmlMethodCall()
                 .withMethodName("selve.GW.device.setFunction")
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, aktorId),
+                    new SelveXmlMethodParameter(ParameterType.INT, deviceId),
                     new SelveXmlMethodParameter(ParameterType.INT, function)
                 );
         }
-        public static SelveXmlMessage setLabel(int aktorId, String label) {
-            Validator.validateCommeoAktorId(aktorId);
+        public static SelveXmlMessage setLabel(int deviceId, String label) {
+            Validator.validateCommeoDeviceId(deviceId);
             return new SelveXmlMethodCall()
                 .withMethodName("selve.GW.device.setLabel")
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, aktorId),
+                    new SelveXmlMethodParameter(ParameterType.INT, deviceId),
                     new SelveXmlMethodParameter(ParameterType.STRING, label)
                 );
         }
-        public static SelveXmlMessage setType(int aktorId, int type) {
-            Validator.validateCommeoAktorId(aktorId);
+        public static SelveXmlMessage setType(int deviceId, int type) {
+            Validator.validateCommeoDeviceId(deviceId);
             return new SelveXmlMethodCall()
                 .withMethodName("selve.GW.device.setType")
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, aktorId),
+                    new SelveXmlMethodParameter(ParameterType.INT, deviceId),
                     new SelveXmlMethodParameter(ParameterType.INT, type)
                 );
         }
-        public static SelveXmlMessage delete(int aktorId) {
-            Validator.validateCommeoAktorId(aktorId);
+        public static SelveXmlMessage delete(int deviceId) {
+            Validator.validateCommeoDeviceId(deviceId);
             return new SelveXmlMethodCall()
                 .withMethodName("selve.GW.device.delete")
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, aktorId)
+                    new SelveXmlMethodParameter(ParameterType.INT, deviceId)
                 );
         }
     }
 
     public static class Command {
-        public static SelveXmlMessage device(int aktorId, int command, int type, int parameter) {
-            Validator.validateCommeoAktorId(aktorId);
+        public static SelveXmlMessage device(int deviceId, int command, int type, int parameter) {
+            Validator.validateCommeoDeviceId(deviceId);
             return new SelveXmlMethodCall()
                 .withMethodName("selve.GW.command.device")
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, aktorId),
+                    new SelveXmlMethodParameter(ParameterType.INT, deviceId),
                     new SelveXmlMethodParameter(ParameterType.INT, command),
                     new SelveXmlMethodParameter(ParameterType.INT, type),
                     new SelveXmlMethodParameter(ParameterType.INT, parameter)
