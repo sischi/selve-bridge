@@ -1,6 +1,4 @@
-package com.sischi.selvebridge.core;
-
-import com.sischi.selvebridge.core.util.HasLogger;
+package com.sischi.selvebridge.util;
 
 public class ConnectionWatchdog implements HasLogger {
 

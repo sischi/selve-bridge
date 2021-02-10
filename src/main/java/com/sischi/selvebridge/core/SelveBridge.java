@@ -7,15 +7,18 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.sischi.selvebridge.core.ConnectionManager.DataReceivedHandler;
-import com.sischi.selvebridge.core.MessageParser.IncomingXmlMessageHandler;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
 import com.sischi.selvebridge.core.entities.properties.DeadlockProperties;
 import com.sischi.selvebridge.core.exception.DeviceAlreadyLockedException;
 import com.sischi.selvebridge.core.exception.DeviceNotConnectedException;
-import com.sischi.selvebridge.core.util.HasLogger;
+import com.sischi.selvebridge.core.gateway.ConnectionManager;
+import com.sischi.selvebridge.core.gateway.ConnectionManager.DataReceivedHandler;
+import com.sischi.selvebridge.core.xml.MessageParser;
+import com.sischi.selvebridge.core.xml.MessageParser.IncomingXmlMessageHandler;
+import com.sischi.selvebridge.util.HasLogger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

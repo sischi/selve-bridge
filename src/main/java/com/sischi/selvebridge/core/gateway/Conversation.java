@@ -1,4 +1,4 @@
-package com.sischi.selvebridge.core;
+package com.sischi.selvebridge.core.gateway;
 
 import java.time.LocalDateTime;
 

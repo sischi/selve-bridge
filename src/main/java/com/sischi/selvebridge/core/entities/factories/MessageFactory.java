@@ -4,7 +4,7 @@ import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter.ParameterType;
-import com.sischi.selvebridge.core.util.Validator;
+import com.sischi.selvebridge.util.Validator;
 
 public class MessageFactory {
 

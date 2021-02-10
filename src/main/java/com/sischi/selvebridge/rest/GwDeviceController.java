@@ -1,8 +1,8 @@
 package com.sischi.selvebridge.rest;
 
-import com.sischi.selvebridge.core.Conversation;
 import com.sischi.selvebridge.core.entities.factories.MessageFactory;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
+import com.sischi.selvebridge.core.gateway.Conversation;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

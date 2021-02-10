@@ -1,4 +1,4 @@
-package com.sischi.selvebridge.core;
+package com.sischi.selvebridge.core.xml;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,11 +10,11 @@ import com.sischi.selvebridge.core.xml.converter.SelveXmlMessageDeserializer;
 import com.sischi.selvebridge.core.xml.converter.SelveXmlMessageSerializer;
 import com.sischi.selvebridge.core.xml.converter.SelveXmlMethodCallDeserializer;
 import com.sischi.selvebridge.core.xml.converter.SelveXmlMethodResponseDeserializer;
+import com.sischi.selvebridge.util.HasLogger;
+import com.sischi.selvebridge.util.Utils;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
-import com.sischi.selvebridge.core.util.HasLogger;
-import com.sischi.selvebridge.core.util.Utils;
 
 import org.springframework.stereotype.Component;
 

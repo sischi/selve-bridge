@@ -5,12 +5,12 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.sischi.selvebridge.core.ConnectionWatchdog;
-import com.sischi.selvebridge.core.ReconnectThread;
-import com.sischi.selvebridge.core.ConnectionWatchdog.ConnectionWatchdogHandler;
-import com.sischi.selvebridge.core.ReconnectThread.ReconnectThreadHandler;
 import com.sischi.selvebridge.core.entities.properties.MqttProperties;
-import com.sischi.selvebridge.core.util.HasLogger;
+import com.sischi.selvebridge.util.ConnectionWatchdog;
+import com.sischi.selvebridge.util.HasLogger;
+import com.sischi.selvebridge.util.ReconnectThread;
+import com.sischi.selvebridge.util.ConnectionWatchdog.ConnectionWatchdogHandler;
+import com.sischi.selvebridge.util.ReconnectThread.ReconnectThreadHandler;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;

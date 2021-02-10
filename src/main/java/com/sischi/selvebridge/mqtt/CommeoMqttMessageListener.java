@@ -12,7 +12,7 @@ import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
 import com.sischi.selvebridge.core.entities.properties.MqttProperties;
 import com.sischi.selvebridge.core.service.CommeoSelveService;
-import com.sischi.selvebridge.core.util.HasLogger;
+import com.sischi.selvebridge.util.HasLogger;
 
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;
 import org.eclipse.paho.client.mqttv3.MqttMessage;

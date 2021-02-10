@@ -12,7 +12,7 @@ import com.sischi.selvebridge.core.entities.message.SelveXmlError;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
-import com.sischi.selvebridge.core.util.HasLogger;
+import com.sischi.selvebridge.util.HasLogger;
 
 
 /**

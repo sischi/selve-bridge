@@ -1,4 +1,4 @@
-package com.sischi.selvebridge.core.util;
+package com.sischi.selvebridge.util;
 
 public class Validator {
     

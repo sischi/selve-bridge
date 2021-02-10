@@ -11,7 +11,7 @@ import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter;
-import com.sischi.selvebridge.core.util.HasLogger;
+import com.sischi.selvebridge.util.HasLogger;
 
 public class SelveXmlMethodCallDeserializer extends StdDeserializer<SelveXmlMethodCall> implements HasLogger {
 

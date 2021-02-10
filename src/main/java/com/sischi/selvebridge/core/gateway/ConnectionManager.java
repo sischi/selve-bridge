@@ -1,4 +1,4 @@
-package com.sischi.selvebridge.core;
+package com.sischi.selvebridge.core.gateway;
 
 import java.nio.charset.Charset;
 
@@ -8,10 +8,12 @@ import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 import com.fazecast.jSerialComm.SerialPortInvalidPortException;
-import com.sischi.selvebridge.core.ConnectionWatchdog.ConnectionWatchdogHandler;
-import com.sischi.selvebridge.core.ReconnectThread.ReconnectThreadHandler;
 import com.sischi.selvebridge.core.entities.properties.ConnectionProperties;
-import com.sischi.selvebridge.core.util.HasLogger;
+import com.sischi.selvebridge.util.ConnectionWatchdog;
+import com.sischi.selvebridge.util.HasLogger;
+import com.sischi.selvebridge.util.ReconnectThread;
+import com.sischi.selvebridge.util.ConnectionWatchdog.ConnectionWatchdogHandler;
+import com.sischi.selvebridge.util.ReconnectThread.ReconnectThreadHandler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

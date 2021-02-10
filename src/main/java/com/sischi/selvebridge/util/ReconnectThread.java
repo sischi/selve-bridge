@@ -1,8 +1,6 @@
-package com.sischi.selvebridge.core;
+package com.sischi.selvebridge.util;
 
 import java.util.concurrent.Semaphore;
-
-import com.sischi.selvebridge.core.util.HasLogger;
 
 public class ReconnectThread implements HasLogger {
     

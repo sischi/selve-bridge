@@ -1,7 +1,7 @@
 package com.sischi.selvebridge.rest;
 
-import com.sischi.selvebridge.core.Conversation;
 import com.sischi.selvebridge.core.exception.ConversationCancelled;
+import com.sischi.selvebridge.core.gateway.Conversation;
 import com.sischi.selvebridge.core.service.SelveService;
 
 import org.springframework.beans.factory.annotation.Autowired;

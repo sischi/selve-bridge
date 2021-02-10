@@ -1,4 +1,4 @@
-package com.sischi.selvebridge.core.util;
+package com.sischi.selvebridge.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

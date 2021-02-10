@@ -1,12 +1,13 @@
-package com.sischi.selvebridge.core;
+package com.sischi.selvebridge.core.gateway;
 
 import javax.annotation.PostConstruct;
 
+import com.sischi.selvebridge.core.SelveBridge;
 import com.sischi.selvebridge.core.SelveBridge.DeadlockHandler;
 import com.sischi.selvebridge.core.SelveBridge.SelveXmlMessageHandler;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
-import com.sischi.selvebridge.core.util.HasLogger;
+import com.sischi.selvebridge.util.HasLogger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
