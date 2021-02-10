@@ -29,41 +29,41 @@ public class ReconnectThread implements HasLogger {
 
     public void start() {
         if (interval <= 0) {
-            getLogger().warn("reconnect thread is disabled due to corresponding reconnect interval property is set to '"+ interval +"'!");
+            getLogger().warn("reconnect thread '{}' is disabled due to corresponding reconnect interval property is set to '{}'!", name, interval);
             return;
         }
 
         if(handler == null) {
-            getLogger().error("no reconnect thread handler found!");
+            getLogger().error("no reconnect thread handler found reconnect thread '{}'!", name);
             return;
         }
 
         if (mutex.tryAcquire()) {
             if (thread == null || !thread.isAlive()) {
                 thread = new Thread(() -> {
-                    getLogger().debug("reconnect thread started ...");
+                    getLogger().info("reconnect thread '{}' started", name);
                     while (!handler.checkConnection()) {
-                        getLogger().info("still not connected, so will try again soon ...");
+                        getLogger().info("still not connected, so will try again in '{}' seconds", interval);
                         handler.disconnect();
                         try {
-                            getLogger().debug("waiting for "+ interval +" sec ...");
+                            getLogger().debug("waiting for '{}' seconds ...", interval);
                             Thread.sleep(interval * 1000);
                         } catch (InterruptedException e) {
-                            getLogger().warn("reconnect thread got interrupted!", e);
+                            getLogger().warn("reconnect thread '{}' got interrupted!", name, e);
                         }
                         handler.connect();
                     }
-                    getLogger().debug("connection successfully established! finishing reconnect thread!");
+                    getLogger().info("'{}': connection successfully established! finishing reconnect thread!", name);
                     handler.handleSuccessfulReconnect();
                 });
                 thread.setName(name);
                 thread.start();
             } else {
-                getLogger().info("a reconnect thread is already running!");
+                getLogger().info("a reconnect thread '{}' is already running!", name);
             }
             mutex.release();
         } else {
-            getLogger().info("could not acquire reconnect mutex");
+            getLogger().info("could not acquire reconnect mutex for '{}'", name);
         }
     }
 }

@@ -23,27 +23,27 @@ public class ConnectionWatchdog implements HasLogger {
 
     public void start() {
         if (interval <= 0) {
-            getLogger().warn("connection watchdog is disabled due to corresponding watchdog interval is set to '"+ interval +"'!");
+            getLogger().warn("connection watchdog '{}' is disabled due to corresponding watchdog interval is set to '{}'!", name, interval);
             return;
         }
 
         if(handler == null) {
-            getLogger().error("no connection watchdog handler found!");
+            getLogger().error("no connection watchdog handler found for watchdog '{}'!", name);
             return;
         }
 
         if (watchdog == null || !watchdog.isAlive()) {
             watchdog = new Thread(() -> {
-                getLogger().info("connection watchdog started ...");
+                getLogger().info("connection watchdog '{}' started", name);
                 while (handler.checkConnection()) {
-                    getLogger().info("the connection is still alive, so nothing to do here");
+                    getLogger().info("'{}': the connection is still alive, so nothing to do here", name);
                     try {
                         Thread.sleep(interval * 1000);
                     } catch (InterruptedException e) {
-                        getLogger().warn("connection watchdog got interrupted!", e);
+                        getLogger().warn("connection watchdog '{}' got interrupted!", name, e);
                     }
                 }
-                getLogger().warn("detected connection to be lost!");
+                getLogger().warn("'{}': detected connection to be lost!", name);
                 handler.handleLostConnection();
             });
             watchdog.setName(name);
