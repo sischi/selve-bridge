@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping("main")
+@RequestMapping("/app")
 public class SelveRestController extends AbstractSelveRestController {
 
     @Value("${app.version}")
