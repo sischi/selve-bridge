@@ -57,7 +57,7 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
         connect();
 
         if(isConnected()) {
-            getLogger().debug("mqtt client connected succesfully!");
+            getLogger().debug("mqtt client succesfully connected to broker '{}'!", connectionString);
             connectionWatchdog.start();
         }
         else {
