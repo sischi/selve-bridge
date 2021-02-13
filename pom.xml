@@ -76,6 +76,44 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.34.1</version>
+
+                <configuration>
+                    <images>
+                        <image>
+                            <alias>%a</alias>
+                            <name>%a:${project.version}</name>
+
+                            <build> 
+                                <from>openjdk:8-jre</from>
+                                <env>
+                                    <LANG>de_DE.UTF-8</LANG>
+                                    <TZ>Europe/Berlin</TZ>
+                                </env>
+                                <assembly>
+                                    <descriptorRef>artifact-with-dependencies</descriptorRef> 
+                                </assembly>
+                                <cmd> 
+                                   <shell>java -Duser.timezone=Europe/Berlin -jar /maven/${project.build.finalName}.jar</shell>
+                                </cmd>
+                                <ports>
+                                    <port>8080</port>
+                                </ports>
+                             </build>
+                            
+                             <run>
+                                 <ports>
+                                        <port>8080:8080</port>
+                                 </ports>
+                             </run>
+                        </image>
+                    </images>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
