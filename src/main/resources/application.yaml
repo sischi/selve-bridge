@@ -22,7 +22,7 @@ selvebridge:
     broker: hostname
     protocol: tcp
     port: 1883
-    qos: EXACTLY_ONCE
+    qos: 0
     retain: true
-    prefix: "selve/"
+    prefix: "selve"
     
