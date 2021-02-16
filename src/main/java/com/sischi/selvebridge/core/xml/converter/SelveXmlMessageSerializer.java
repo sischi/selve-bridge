@@ -17,7 +17,7 @@ import com.sischi.selvebridge.util.HasLogger;
 /**
  * Custom serializer to convert a selve message object to a xml string matching the selve specification.
  * 
- * @author sischi
+ * @author Simon Schiller
  */
 public class SelveXmlMessageSerializer extends StdSerializer<SelveXmlMessage> implements HasLogger {
 

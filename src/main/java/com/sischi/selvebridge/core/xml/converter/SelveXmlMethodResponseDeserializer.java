@@ -18,7 +18,7 @@ import com.sischi.selvebridge.util.HasLogger;
 /**
  * Custom deserializer to parse a method response xml string to a selve message object.
  * 
- * @author sischi
+ * @author Simon Schiller
  */
 public class SelveXmlMethodResponseDeserializer extends StdDeserializer<SelveXmlMethodResponse> implements HasLogger {
 

@@ -21,6 +21,21 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 
+/**
+ * 
+ * This class connects to the mqtt broker specified by the {@link MqttProperties}. To be able to react on a
+ * connection loss, a {@link ConnectionWatchdog} is started in its own thread after the connection is 
+ * established successfully. If a connection loss is detected, a {@link ReconnectThread} periodically
+ * tries to reconnect until a connection could be established.
+ * <br><br>
+ * 
+ * It is responsible to perform subscriptions and to recover them after a successful reconnect and to publish
+ * messages on the mqtt broker.
+ * 
+ * 
+ * @author Simon Schiller
+ * 
+ */
 @ConditionalOnProperty(
     name = "selvebridge.mqtt.enabled",
     havingValue = "true",
@@ -40,13 +55,18 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
 
     protected int count = 0;
 
+    /**
+     * make some initializations
+     */
     @PostConstruct
     protected void init() {
+        // initialize reconnect thread
         reconnectThread = new ReconnectThread(
                 "mqtt-recon",
                 30,
                 this
             );
+        // initialize connection watchdog
         connectionWatchdog = new ConnectionWatchdog(
                 "mqtt-watch",
                 60,
@@ -66,10 +86,18 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
         }
     }
 
+    /**
+     * publish a message on the given topic
+     * @param topic the topic on that the message should be published
+     * @param message the message that should be published
+     */
     public void publish(String topic, String message) {
+        // create the mqtt message with the information provided and configured via properties
         MqttMessage mqttMessage = new MqttMessage(message.getBytes());
         mqttMessage.setQos(mqttProperties.getQos());
         mqttMessage.setRetained(mqttProperties.getRetain());
+
+        // try to publish the mqtt message
         try {
             mqttClient.publish(topic, mqttMessage);
             getLogger().debug("successfully published mqtt message '"+ message +"' on topic '"+ topic +"'!");
@@ -78,6 +106,9 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
         }
     }
 
+    /**
+     * build the connection string used to connect to the mqtt broker
+     */
     private void initConnectionString() {
         connectionString = mqttProperties.getProtocol()
                     + "://"
@@ -86,17 +117,27 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
                     + mqttProperties.getPort();
     }
 
+    /**
+     * add a mqtt subscription
+     * @param subscription the {@link MqttSubscription} that should be made
+     */
     public void subscribe(MqttSubscription subscription) {
         subscriptions.add(subscription);
         doSubscribe(subscription);
     }
 
+    /**
+     * restores all known subscriptions
+     */
     protected void restoreSubscriptions() {
         for(MqttSubscription sub : subscriptions) {
             doSubscribe(sub);
         }
     }
 
+    /**
+     * unsubscribe all known subscriptions
+     */
     protected void unsubscribeAll() {
         for(MqttSubscription sub : subscriptions) {
             try {
@@ -107,6 +148,9 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
         }
     }
 
+    /**
+     * actually makes a subscription against the mqtt broker according to the given {@link MqttSubscription}
+     */
     protected void doSubscribe(MqttSubscription subscription) {
         try {
             mqttClient.subscribe(subscription.getTopic(), mqttProperties.getQos(), subscription.getListener());
@@ -116,6 +160,10 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
         }
     }
 
+    /**
+     * checks whether the connection to the mqtt broker is still valid
+     * @return {@code true} if the connection is still valid, {@code false} otherwise
+     */
     protected boolean isConnected() {
         if(mqttClient != null && mqttClient.isConnected()) {
             return true;
@@ -123,6 +171,9 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
         return false;
     }
 
+    /**
+     * tries to connect to the mqtt broker
+     */
     @Override
     public void connect() {
         try {
@@ -137,6 +188,9 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
         }
     }
 
+    /**
+     * disconnects from the mqtt broker
+     */
     @Override
     public void disconnect() {
         if(isConnected()) {
@@ -149,6 +203,7 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
         }
         mqttClient = null;
     }
+
 
     @Override
     public void handleSuccessfulReconnect() {

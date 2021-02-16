@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Custom desserializer to parse a selve message xml string to a selve message object
  * 
- * @author sischi
+ * @author Simon Schiller
  */
 public class SelveXmlMessageDeserializer extends StdDeserializer<SelveXmlMessage> {
 
