@@ -8,9 +8,12 @@ import com.sischi.selvebridge.core.SelveBridge;
 import com.sischi.selvebridge.core.SelveBridge.SelveXmlMessageHandler;
 import com.sischi.selvebridge.core.entities.commeo.CommeoCommandPayload;
 import com.sischi.selvebridge.core.entities.commeo.CommeoDeviceState;
+import com.sischi.selvebridge.core.entities.commeo.CommeoDeviceStateFactory;
+import com.sischi.selvebridge.core.entities.enumerations.MethodNames;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
 import com.sischi.selvebridge.core.entities.properties.MqttProperties;
+import com.sischi.selvebridge.core.gateway.Conversation;
 import com.sischi.selvebridge.core.service.CommeoSelveService;
 import com.sischi.selvebridge.util.HasLogger;
 
@@ -28,7 +31,6 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
     private static final String KEYWORD_STATE = "state";
 
     private static final String PROTOCOL = "commeo";
-    private static final String RESULT_CALLBACK_METHODNAME = "selve.GW.command.result";
 
     private String TOPIC_COMMAND = null;
 
@@ -76,6 +78,7 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
         String[] chunks = topic.split("/");
         Integer deviceId = null;
 
+        // parse device id
         try {
             deviceId = Integer.parseInt(chunks[0]);
         } catch (NumberFormatException ex) {
@@ -83,6 +86,7 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
             return;
         }
 
+        // parse command payload
         CommeoCommandPayload payload = null;
         try {
             payload = om.readValue(message, CommeoCommandPayload.class);
@@ -96,12 +100,19 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
     protected void processCommand(int deviceId, CommeoCommandPayload commandPayload) {
         getLogger().debug("processing command '{}' for device id '{}'", commandPayload, deviceId);
 
+        // send command to the device
         selveService.sendCommand(deviceId, commandPayload);
+
+        // query the current state of the device to publish it back to the device's mqtt topic
         CommeoDeviceState deviceState = selveService.requestDeviceState(deviceId);
+        publishDeviceState(deviceState);
+    }
+
+    protected void publishDeviceState(CommeoDeviceState state) {
         try {
-            mqttAdapter.publish(generateStateTopic(deviceId), om.writeValueAsString(deviceState));
-        } catch (JsonProcessingException ex) {
-            getLogger().error("could not publish device state '{}'!", deviceState, ex);
+            mqttAdapter.publish(generateStateTopic(state.getDeviceId()), om.writeValueAsString(state));
+        } catch (Exception ex) {
+            getLogger().error("could not publish device state '{}'!", state, ex);
         }
     }
 
@@ -111,9 +122,22 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
 
     @Override
     public void onMethodCall(SelveXmlMethodCall call) {
-        if(RESULT_CALLBACK_METHODNAME.equals(call.getMethodName())) {
-            getLogger().info("received command result: '{}'", call.toString());
+        if(MethodNames.COMMAND_RESULT.equals(call.getMethodName())) {
+            handleCommandResult(call);
         }
+        else if(MethodNames.EVENT_DEVICE.equals(call.getMethodName())) {
+            handleDeviceStateChanged(call);
+        }
+    }
+
+    protected void handleCommandResult(SelveXmlMethodCall call) {
+        getLogger().info("received command result: '{}'", call.toString());
+    }
+
+    protected void handleDeviceStateChanged(SelveXmlMethodCall call) {
+        getLogger().info("received device state changed event: '{}'", call.toString());
+        CommeoDeviceState state = CommeoDeviceStateFactory.parseFromDeviceStateEvent(call);
+        publishDeviceState(state);
     }
     
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.sischi.selvebridge.core.entities.commeo.CommeoCommandPayload;
 import com.sischi.selvebridge.core.entities.commeo.CommeoDeviceState;
+import com.sischi.selvebridge.core.entities.commeo.CommeoDeviceStateFactory;
 import com.sischi.selvebridge.core.entities.enumerations.CommeoCommandType;
 import com.sischi.selvebridge.core.entities.enumerations.DeviceState;
 import com.sischi.selvebridge.core.entities.factories.MessageFactory;
@@ -21,7 +22,7 @@ import org.springframework.stereotype.Component;
 public class CommeoSelveService extends SelveService {
 
 
-    public void sendCommand(int deviceId, CommeoCommandPayload payload) {
+    public Conversation sendCommand(int deviceId, CommeoCommandPayload payload) {
         SelveXmlMessage message = MessageFactory.Command.device(
                 deviceId,
                 payload.getCommand().getValue(),
@@ -32,6 +33,7 @@ public class CommeoSelveService extends SelveService {
 
         Conversation conversation = sendSynchronously((SelveXmlMethodCall) message);
         checkCommandSuccess(conversation);
+        return conversation;
     }
 
     protected boolean checkCommandSuccess(Conversation conversation) {
@@ -75,15 +77,7 @@ public class CommeoSelveService extends SelveService {
             return null;
         }
     
-        CommeoDeviceState deviceState = new CommeoDeviceState();
-
-        List<SelveXmlMethodParameter> params = response.getParameters();
-
-        deviceState.setDeviceId((int) params.get(0).getValue());
-        deviceState.setState(DeviceState.parse((int) params.get(1).getValue()));
-        deviceState.setPosition(Utils.positionToPercentage((int) params.get(2).getValue()));
-        deviceState.setTargetPosition(Utils.positionToPercentage((int) params.get(3).getValue()));
-
+        CommeoDeviceState deviceState = CommeoDeviceStateFactory.parseFromDeviceStateResponse(response);
         return deviceState;
     }
 

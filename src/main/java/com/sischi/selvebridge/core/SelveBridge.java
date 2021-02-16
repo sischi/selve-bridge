@@ -138,7 +138,8 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 			return;
 		}
 
-		long sinceLastLocked = Duration.between(lastLocked, LocalDateTime.now()).toSeconds();
+		//long sinceLastLocked = Duration.between(lastLocked, LocalDateTime.now()).toSeconds();
+		long sinceLastLocked = 10;
 		if(sinceLastLocked > deadlockProperties.getThreshold()) {
 			getLogger().warn("possible deadlock detected! the device is locked for {} seconds. forcing 'emergency unlock'!", sinceLastLocked);
 			unlock();
@@ -178,12 +179,15 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 
 	
 	public void handleMethodCall(SelveXmlMethodCall message) {
-		getLogger().debug("processing incoming method call by invoking '{}' registered handlers", getSelveXmlMessageHandlers().size());
 		try {
-			handleIncomingLogEvent(message);
+			if(MethodNames.EVENT_LOG.equals(message.getMethodName())) {
+				handleIncomingLogEvent(message);
+			}
 		} catch(Exception ex) {
 			getLogger().warn("unhandled exception in event log handler for message '{}'", message, ex);
 		}
+		
+		getLogger().debug("processing incoming method call by invoking '{}' registered handlers", getSelveXmlMessageHandlers().size());
 		for(SelveXmlMessageHandler handler : getSelveXmlMessageHandlers()) {
 			try {
 				handler.onMethodCall(message);
@@ -206,22 +210,20 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 	}
 
 	protected void handleIncomingLogEvent(SelveXmlMethodCall message) {
-		if(MethodNames.EVENT_LOG.equals(message.getMethodName())) {
-			String log = "GW: [time='"+ message.getParameters().get(1).getValue() +"', "+
-							"code='"+ message.getParameters().get(2).getValue() +"', "+
-							"value='"+ message.getParameters().get(3).getValue() +"', "+
-							"description='"+ message.getParameters().get(4).getValue() +"']";
-			switch ((int) message.getParameters().get(0).getValue()) {
-				case 1:
-					getLogger().warn(log);
-					break;
-				case 2:
-					getLogger().error(log);
-					break;
-				default:
-					getLogger().info(log);
-					break;
-			}
+		String log = "GW: [time='"+ message.getParameters().get(1).getValue() +"', "+
+						"code='"+ message.getParameters().get(2).getValue() +"', "+
+						"value='"+ message.getParameters().get(3).getValue() +"', "+
+						"description='"+ message.getParameters().get(4).getValue() +"']";
+		switch ((int) message.getParameters().get(0).getValue()) {
+			case 1:
+				getLogger().warn(log);
+				break;
+			case 2:
+				getLogger().error(log);
+				break;
+			default:
+				getLogger().info(log);
+				break;
 		}
 	}
 
