@@ -2,7 +2,6 @@ package com.sischi.selvebridge.mqtt;
 
 import javax.annotation.PostConstruct;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sischi.selvebridge.core.SelveBridge;
 import com.sischi.selvebridge.core.SelveBridge.SelveXmlMessageHandler;
@@ -13,7 +12,6 @@ import com.sischi.selvebridge.core.entities.enumerations.MethodNames;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
 import com.sischi.selvebridge.core.entities.properties.MqttProperties;
-import com.sischi.selvebridge.core.gateway.Conversation;
 import com.sischi.selvebridge.core.service.CommeoSelveService;
 import com.sischi.selvebridge.util.HasLogger;
 

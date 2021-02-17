@@ -129,17 +129,16 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 
 	private void deadlockPrevention() {
 		if(lastLocked == null) {
-			getLogger().trace("device was not locked yet, so no deadlock found!");
+			getLogger().debug("device was not locked yet, so no deadlock found!");
 			return;
 		}
 
 		if(!isBusy) {
-			getLogger().trace("device is not locked, so no deadlock found!");
+			getLogger().debug("device is not locked, so no deadlock found!");
 			return;
 		}
 
-		//long sinceLastLocked = Duration.between(lastLocked, LocalDateTime.now()).toSeconds();
-		long sinceLastLocked = 10;
+		long sinceLastLocked = Duration.between(lastLocked, LocalDateTime.now()).getSeconds();
 		if(sinceLastLocked > deadlockProperties.getThreshold()) {
 			getLogger().warn("possible deadlock detected! the device is locked for {} seconds. forcing 'emergency unlock'!", sinceLastLocked);
 			unlock();
