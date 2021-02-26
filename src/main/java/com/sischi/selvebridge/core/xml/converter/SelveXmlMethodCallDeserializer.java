@@ -13,6 +13,12 @@ import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter;
 import com.sischi.selvebridge.util.HasLogger;
 
+
+/**
+ * Custom deserializer to parse a method call xml string to a selve message object.
+ * 
+ * @author Simon Schiller
+ */
 public class SelveXmlMethodCallDeserializer extends StdDeserializer<SelveXmlMethodCall> implements HasLogger {
 
     private static final long serialVersionUID = 1L;

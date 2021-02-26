@@ -3,8 +3,6 @@ package com.sischi.selvebridge.mqtt;
 import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sischi.selvebridge.core.SelveBridge;
-import com.sischi.selvebridge.core.SelveBridge.SelveXmlMessageHandler;
 import com.sischi.selvebridge.core.entities.commeo.CommeoCommandPayload;
 import com.sischi.selvebridge.core.entities.commeo.CommeoDeviceState;
 import com.sischi.selvebridge.core.entities.commeo.CommeoDeviceStateFactory;
@@ -12,6 +10,8 @@ import com.sischi.selvebridge.core.entities.enumerations.MethodNames;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
 import com.sischi.selvebridge.core.entities.properties.MqttProperties;
+import com.sischi.selvebridge.core.gateway.SelveBridge;
+import com.sischi.selvebridge.core.gateway.SelveXmlMessageHandler;
 import com.sischi.selvebridge.core.service.CommeoSelveService;
 import com.sischi.selvebridge.util.HasLogger;
 

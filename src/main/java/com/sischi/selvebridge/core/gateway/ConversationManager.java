@@ -2,9 +2,6 @@ package com.sischi.selvebridge.core.gateway;
 
 import javax.annotation.PostConstruct;
 
-import com.sischi.selvebridge.core.SelveBridge;
-import com.sischi.selvebridge.core.SelveBridge.DeadlockHandler;
-import com.sischi.selvebridge.core.SelveBridge.SelveXmlMessageHandler;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
 import com.sischi.selvebridge.util.HasLogger;

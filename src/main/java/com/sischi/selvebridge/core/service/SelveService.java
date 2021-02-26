@@ -1,10 +1,10 @@
 package com.sischi.selvebridge.core.service;
 
-import com.sischi.selvebridge.core.SelveBridge;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.gateway.Conversation;
 import com.sischi.selvebridge.core.gateway.ConversationManager;
+import com.sischi.selvebridge.core.gateway.SelveBridge;
 import com.sischi.selvebridge.util.HasLogger;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.sischi.selvebridge.core;
+package com.sischi.selvebridge.core.gateway;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -14,7 +14,6 @@ import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
 import com.sischi.selvebridge.core.entities.properties.DeadlockProperties;
 import com.sischi.selvebridge.core.exception.DeviceAlreadyLockedException;
 import com.sischi.selvebridge.core.exception.DeviceNotConnectedException;
-import com.sischi.selvebridge.core.gateway.ConnectionManager;
 import com.sischi.selvebridge.core.gateway.ConnectionManager.DataReceivedHandler;
 import com.sischi.selvebridge.core.xml.MessageParser;
 import com.sischi.selvebridge.core.xml.MessageParser.IncomingXmlMessageHandler;
@@ -23,6 +22,22 @@ import com.sischi.selvebridge.util.HasLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+
+/**
+ * 
+ * The {@link SelveBridge} is responsible for the communication with the selve rf usb gateway and talks
+ * with the selve gateway via XML messages on the one hand and provides mechanisms for sending and
+ * processing the translated POJOs by the application on the other hand.<br>
+ * <br>
+ * The translation job from xml to POJO and vice-versa is done by the {@link MessageParser} and the
+ * connection to the selve gateway via the serial usb connection is maintained by the {@link ConnectionManager}.<br>
+ * <br>
+ * On top of that, this class maintains the use of the gateway by controlling the usage of the gateway to be compliant
+ * with the selve specification.
+ * 
+ * @author Simon Schiller
+ * 
+ */
 @Component
 public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlMessageHandler {
 
@@ -36,20 +51,18 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 
 	private List<SelveXmlMessageHandler> selveXmlMessageHandlers = new ArrayList<>();
 	private List<DeadlockHandler> deadlockHandlers = new ArrayList<>();
-
-	public interface SelveXmlMessageHandler {
-		void onMethodResponse(SelveXmlMethodResponse response);
-		void onMethodCall(SelveXmlMethodCall call);
-	}
-
-	public interface DeadlockHandler {
-		void handleDeadlock();
-	}
     
+	/**
+	 * @return a list of all currently registered {@link SelveXmlMessageHandler}s
+	 */
     public List<SelveXmlMessageHandler> getSelveXmlMessageHandlers() {
         return selveXmlMessageHandlers;
     }
 
+	/**
+	 * register the given {@link SelveXmlMessageHandler} if not already already registered
+	 * @param handler the {@link SelveXmlMessageHandler} that should be registered
+	 */
     public void addSelveXmlMessageHandler(SelveXmlMessageHandler handler) {
         if(!getSelveXmlMessageHandlers().contains(handler)) {
             getSelveXmlMessageHandlers().add(handler);
@@ -59,10 +72,17 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
         }
     }
 
+	/**
+	 * @return a list of all currently registered {@link DeadlockHandler}s
+	 */
 	public List<DeadlockHandler> getDeadlockHandlers() {
 		return deadlockHandlers;
 	}
 
+	/**
+	 * register the given {@link DeadlockHandler} if not already already registered
+	 * @param handler the {@link DeadlockHandler} that should be registered
+	 */
 	public void addDeadlockHandler(DeadlockHandler handler) {
 		if(!getDeadlockHandlers().contains(handler)) {
 			getDeadlockHandlers().add(handler);
@@ -72,6 +92,9 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 		}
 	}
 
+	/**
+	 * does the required initializations after the component is created
+	 */
     @PostConstruct
     protected void init() {
 		connectionManager.setDataReceivedHandler(this);
@@ -79,6 +102,10 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 		startDeadlockWatchdog();
 	}
 
+	/**
+	 * tries to lock the bridge to be able to issue a command
+	 * @return {@code true} if the bridge was locked successfully, {@code false} otherwise
+	 */
 	private synchronized boolean lock() {
 		if(isBusy) {
 			getLogger().warn("could not lock selve device due to it is busy");
@@ -91,6 +118,9 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 		return true;
 	}
 
+	/**
+	 * unlocks the bridge, if it was locked. If the bridge is already unlocked, this method does nothing.
+	 */
 	private void unlock() {
 		if(isBusy) {
 			isBusy = false;
@@ -101,7 +131,9 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 		}
 	}
 
-
+	/**
+	 * start the deadlock watchdog, that periodically checks for a deadlock
+	 */
 	private void startDeadlockWatchdog() {
         if (deadlockProperties.getWatchdogInterval() <= 0) {
             getLogger().warn("deadlock watchdog is disabled due to corresponding deadlock property is set to '"+ deadlockProperties.getWatchdogInterval() +"'!");
@@ -126,7 +158,11 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
     }
 
 
-
+	/**
+	 * check if a possible deadlock is present. Deadlock in this case means, if the bridge is locked
+	 * and the time since the last lock exceeds a configurable threshold. If a deadlock is identified
+	 * all registered deadlock handlers will be invoked.
+	 */
 	private void deadlockPrevention() {
 		if(lastLocked == null) {
 			getLogger().debug("device was not locked yet, so no deadlock found!");
@@ -143,19 +179,37 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 			getLogger().warn("possible deadlock detected! the device is locked for {} seconds. forcing 'emergency unlock'!", sinceLastLocked);
 			unlock();
 			for(DeadlockHandler handler : getDeadlockHandlers()) {
-				handler.handleDeadlock();
+				if(handler == null) {
+					getLogger().warn("found deadlock handler to benull! so skipping this handler...");
+					continue;
+				}
+				try {
+					handler.handleDeadlock();
+				} catch(Exception ex) {
+					getLogger().warn("unhandled exception in deadlock handler '{}'", handler.getClass().getSimpleName(), ex);
+				}
 			}
 		}
 		else {
-			getLogger().trace("device is locked for {} seconds, so no deadlock found yet. Deadlock threshold is at {} seconds", deadlockProperties.getThreshold());
+			getLogger().debug("device is locked for '{}' seconds, so no deadlock found yet. Deadlock threshold is at '{}' seconds", deadlockProperties.getThreshold());
 		}
 	}
 
+	/**
+	 * takes the given {@link SelveXmlMessage}, converts it to the corresponding xml representation and sends it
+	 * to the gateway
+	 * @param message the {@link SelveXmlMessage} to be sent
+	 */
 	public void sendMessage(SelveXmlMessage message) {
 		getLogger().debug("trying to send message '{}'", message);
 		sendRaw(messageParser.messageToXml(message));
 	}
 
+	/**
+	 * tries to send the given xml message to the gateway by invoking the {@link ConnectionManager} and respecting
+	 * the locked state of the bridge.
+	 * @param xml the xml message to be sent
+	 */
 	public void sendRaw(String xml) {
 		if(connectionManager.isConnected()) {
 			getLogger().info("port is active!");
