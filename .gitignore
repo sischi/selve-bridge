@@ -9,3 +9,6 @@
 
 # build process
 target/
+
+docker/app/*.jar
+docker/app/selvebridge*
