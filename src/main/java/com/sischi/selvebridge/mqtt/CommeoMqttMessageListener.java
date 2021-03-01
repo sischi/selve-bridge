@@ -3,16 +3,16 @@ package com.sischi.selvebridge.mqtt;
 import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sischi.selvebridge.core.entities.commeo.CommeoCommandPayload;
-import com.sischi.selvebridge.core.entities.commeo.CommeoDeviceState;
-import com.sischi.selvebridge.core.entities.commeo.CommeoDeviceStateFactory;
-import com.sischi.selvebridge.core.entities.enumerations.MethodNames;
-import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
-import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
-import com.sischi.selvebridge.core.entities.properties.MqttProperties;
-import com.sischi.selvebridge.core.gateway.SelveBridge;
-import com.sischi.selvebridge.core.gateway.SelveXmlMessageHandler;
-import com.sischi.selvebridge.core.service.CommeoSelveService;
+import com.sischi.selvebridge.configuration.properties.MqttProperties;
+import com.sischi.selvebridge.gateway.SelveBridge;
+import com.sischi.selvebridge.gateway.SelveXmlMessageHandler;
+import com.sischi.selvebridge.gateway.models.commeo.CommeoCommandPayload;
+import com.sischi.selvebridge.gateway.models.commeo.CommeoDeviceState;
+import com.sischi.selvebridge.gateway.models.commeo.CommeoDeviceStateFactory;
+import com.sischi.selvebridge.gateway.models.enums.MethodNames;
+import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodCall;
+import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodResponse;
+import com.sischi.selvebridge.gateway.service.CommeoSelveService;
 import com.sischi.selvebridge.util.HasLogger;
 
 import org.eclipse.paho.client.mqttv3.IMqttMessageListener;

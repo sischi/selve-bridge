@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import com.sischi.selvebridge.core.entities.properties.MqttProperties;
+import com.sischi.selvebridge.configuration.properties.MqttProperties;
 import com.sischi.selvebridge.util.ConnectionWatchdog;
 import com.sischi.selvebridge.util.HasLogger;
 import com.sischi.selvebridge.util.ReconnectThread;

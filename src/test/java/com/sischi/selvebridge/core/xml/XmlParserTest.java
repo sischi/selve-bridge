@@ -4,12 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.sischi.selvebridge.core.entities.message.SelveXmlError;
-import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
-import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
-import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter;
-import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
-import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter.ParameterType;
+import com.sischi.selvebridge.gateway.models.message.SelveXmlError;
+import com.sischi.selvebridge.gateway.models.message.SelveXmlMessage;
+import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodCall;
+import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodParameter;
+import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodResponse;
+import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodParameter.ParameterType;
+import com.sischi.selvebridge.gateway.xml.MessageParser;
 import com.sischi.selvebridge.util.HasLogger;
 
 import org.junit.jupiter.api.Test;
