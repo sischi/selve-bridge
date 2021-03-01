@@ -11,7 +11,7 @@ import com.sischi.selvebridge.core.entities.message.SelveXmlMessage;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodCall;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodResponse;
-import com.sischi.selvebridge.core.entities.message.SelveXmlMessage.MessageType;
+import com.sischi.selvebridge.core.entities.message.MessageType;
 import com.sischi.selvebridge.core.entities.message.SelveXmlMethodParameter.ParameterType;
 
 import org.slf4j.Logger;
