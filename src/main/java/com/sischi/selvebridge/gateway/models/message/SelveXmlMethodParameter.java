@@ -1,11 +1,16 @@
 package com.sischi.selvebridge.gateway.models.message;
 
-
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.sischi.selvebridge.util.Utils;
 
 public class SelveXmlMethodParameter {
     private ParameterType type = null;
     private Object value = null;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String friendlyName;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String friendlyValue;
 
     public SelveXmlMethodParameter() {}    
 
@@ -30,13 +35,33 @@ public class SelveXmlMethodParameter {
         this.value = value;
     }
 
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
+    }
+
+    public String getFriendlyValue() {
+        return friendlyValue;
+    }
+
+    public void setFriendlyValue(String friendlyValue) {
+        this.friendlyValue = friendlyValue;
+    }
+
     public void parseValue(String strValue) {
         switch (type) {
             case INT:
                 setValue(Integer.parseInt(strValue));
                 break;
-            case STRING:
             case BASE64:
+                setValue(strValue);
+                setFriendlyValue(Utils.base64ToBinary(strValue));
+                setFriendlyName("device mask");
+                break;
+            case STRING:
             default:
                 setValue(strValue);
                 break;
@@ -46,8 +71,10 @@ public class SelveXmlMethodParameter {
     @Override
     public String toString() {
         return this.getClass().getSimpleName() +"=["+
-            "type="+ type +", "+
-            "value="+ value.toString() +
+            "type='"+ type +"', "+
+            "value='"+ value.toString() +"', "+
+            "friendlyName='"+ friendlyName +"', "+
+            "friendlyValue='"+ friendlyValue +"'"+
             "]";
     }
 
@@ -79,6 +106,8 @@ public class SelveXmlMethodParameter {
     public String toXmlString() {
         return "<"+ type.getXmlTag() +">"+ value.toString() +"</"+ type.getXmlTag() +">";
     }
+
+    
 
     
 }

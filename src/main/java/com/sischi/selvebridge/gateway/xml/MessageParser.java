@@ -13,9 +13,11 @@ import com.sischi.selvebridge.gateway.xml.converter.SelveXmlMessageDeserializer;
 import com.sischi.selvebridge.gateway.xml.converter.SelveXmlMessageSerializer;
 import com.sischi.selvebridge.gateway.xml.converter.SelveXmlMethodCallDeserializer;
 import com.sischi.selvebridge.gateway.xml.converter.SelveXmlMethodResponseDeserializer;
+import com.sischi.selvebridge.gateway.xml.specification.MessagePostProcessor;
 import com.sischi.selvebridge.util.HasLogger;
 import com.sischi.selvebridge.util.Utils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -40,6 +42,9 @@ public class MessageParser implements HasLogger {
 
     /** list of all currently registered message handlers */
     private List<IncomingXmlMessageHandler> selveXmlMessageHandlers = new ArrayList<>();
+
+    @Autowired
+    private MessagePostProcessor messagePostProcessor;
 
     /**
      * This interface represents a contract to be treated as a message handler. Every implementation can
@@ -220,5 +225,6 @@ public class MessageParser implements HasLogger {
 
     protected void postProcessParsedMessage(SelveXmlMessage message) {
         // here we should add meta information based on the method name of the given message according to the specification
+        messagePostProcessor.postProcessMessage(message);
     }
 }

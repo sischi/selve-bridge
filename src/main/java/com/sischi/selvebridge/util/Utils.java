@@ -13,10 +13,11 @@ public class Utils {
     }
 
     public static String base64ToBinary(String base64) {
+        if(base64 == null) return null;
         byte[] bytes = Base64.getDecoder().decode(base64);
         String binary = "";
         for(byte b : bytes) {
-            binary += String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0');
+            binary += ((binary.length() > 0 ? " " : "") + String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0'));
         }
         return binary;
     }
