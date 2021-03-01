@@ -10,5 +10,8 @@
 # build process
 target/
 
+# generated folders
+selvebridge-*
+
 docker/app/*.jar
 docker/app/selvebridge*

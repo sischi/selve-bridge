@@ -12,7 +12,7 @@ public class MqttProperties {
     private Integer port = 1883;
     private Integer qos = 0;
     private Boolean retain = true;
-    private String topicPrefix = "selve";
+    private String prefix = "selve";
 
     public String getBroker() {
         return broker;
@@ -55,10 +55,10 @@ public class MqttProperties {
     }
 
     public String getTopicPrefix() {
-        return topicPrefix;
+        return prefix;
     }
 
     public void setTopicPrefix(String topicPrefix) {
-        this.topicPrefix = topicPrefix;
+        this.prefix = topicPrefix;
     }
 }

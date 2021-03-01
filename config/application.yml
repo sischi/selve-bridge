@@ -1,0 +1,62 @@
+
+
+parameter-information-config:
+
+  method-calls:
+    "[selve.GW.device.getInfo]":
+      - friendly-name: "device ID"
+        friendly-values: null
+
+
+  method-responses:
+    "[selve.GW.device.getInfo]":
+      - friendly-name: "device ID"
+        friendly-values:
+      - friendly-name: "rf adress"
+        friendly-values:
+      - friendly-name: "device name"
+        friendly-values:
+      - friendly-name: "configuration"
+        friendly-values:
+          - "UNKNOWN"
+          - "SHUTTER"
+          - "JALOUSIE"
+          - "AWNING"
+          - "SWITCH_ACTUATOR"
+          - "DIMMER"
+          - "NIGHTLIGHT_ACTUATOR"
+          - "DAWNLIGHT_ACTUATOR"
+          - "HEATING"
+          - "REFRIGERATOR"
+          - "SWITCH_ACTUATOR_DAY"
+          - "GATEWAY"
+      - friendly-name: "state"
+        friendly-values:
+          - "UNUSED"
+          - "USED"
+          - "TEMPORARILY_USED"
+          - "DELETED"
+
+
+    "[selve.GW.device.scanResult]":
+      - friendly-name: "status"
+        friendly-values: 
+          - "IDLE"
+          - "RUN"
+          - "VERIFY"
+          - "END_SUCCESS"
+          - "END_FAILED"
+      - friendly-name: "number of new devices"
+        friendly-values:
+      - friendly-name: "device mask"
+        friendly-values: null
+
+
+
+
+
+
+
+
+
+  

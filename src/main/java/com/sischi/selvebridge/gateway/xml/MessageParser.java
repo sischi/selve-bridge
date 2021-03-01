@@ -156,16 +156,13 @@ public class MessageParser implements HasLogger {
 
                 chunk = cleanXmlMessage(chunk);
                 getLogger().debug("trying to parse piece: '{}'", chunk);
-                SelveXmlMessage message = null;
-                try {
-                    message = getXmlMapper().readValue(chunk, SelveXmlMessage.class);
+                SelveXmlMessage message = xmlToMessage(chunk);
+                if(message != null) {
                     getLogger().debug("successfully parsed xml '{}' to message '{}'", chunk, message);
-                    // post processing parsed xml message
-                    postProcessParsedMessage(message);
                     handleIncomingMessage(message);
-                } catch (JsonProcessingException ex) {
-                    getLogger().warn("xml '{}' could not be parsed to message! putting it back into message buffer.",
-                            chunk, ex);
+                }
+                else {
+                    getLogger().warn("xml '{}' could not be parsed to message! putting it back into message buffer.", chunk);
                     tempMessageBuffer = tempMessageBuffer.equals("") ? chunk
                             : tempMessageBuffer + XML_MESSAGE_DELIMITER + chunk;
                 }
@@ -200,6 +197,7 @@ public class MessageParser implements HasLogger {
         try {
             String xml = getXmlMapper().writeValueAsString(message);
             getLogger().info("successfully serialized message '{}' to xml '{}'", message.toString(), xml);
+            postProcessParsedMessage(message);
             return xml;
         } catch (JsonProcessingException ex) {
             getLogger().error("could not serialize message '{}'!", message, ex);
@@ -216,6 +214,7 @@ public class MessageParser implements HasLogger {
         try {
             SelveXmlMessage message = getXmlMapper().readValue(xml, SelveXmlMessage.class);
             getLogger().info("successfully parsed xml '{}' to message '{}'", xml, message);
+            postProcessParsedMessage(message);
             return message;
         } catch (JsonProcessingException ex) {
             getLogger().error("could not parse message from xml '{}'!", xml, ex);
@@ -224,7 +223,11 @@ public class MessageParser implements HasLogger {
     }
 
     protected void postProcessParsedMessage(SelveXmlMessage message) {
-        // here we should add meta information based on the method name of the given message according to the specification
-        messagePostProcessor.postProcessMessage(message);
+        try {
+            // here we should add meta information based on the method name of the given message according to the specification
+            messagePostProcessor.postProcessMessage(message);
+        } catch(Exception e) {
+            getLogger().info("something went wrong while adding friendly information for message '{}'", message);
+        }
     }
 }
