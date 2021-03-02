@@ -34,7 +34,7 @@ public class ConnectionWatchdog implements HasLogger {
             watchdog = new Thread(() -> {
                 getLogger().info("connection watchdog '{}' started", name);
                 while (handler.checkConnection()) {
-                    getLogger().info("'{}': the connection is still alive, so nothing to do here", name);
+                    getLogger().debug("'{}': the connection is still alive, so nothing to do here", name);
                     try {
                         Thread.sleep(interval * 1000);
                     } catch (InterruptedException e) {

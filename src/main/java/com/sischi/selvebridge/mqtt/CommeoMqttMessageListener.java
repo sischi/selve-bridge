@@ -67,7 +67,7 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
     @Override
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
         String message = new String(mqttMessage.getPayload());
-        getLogger().debug("received message '{}' on topic '{}'", message, topic);
+        getLogger().info("received message '{}' on topic '{}'", message, topic);
 
         // remove the irrelevant part of the topic
         topic = topic.replace(mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/", "");

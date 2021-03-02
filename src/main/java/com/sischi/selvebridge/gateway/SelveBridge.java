@@ -203,7 +203,7 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 	 * @param message the {@link SelveXmlMessage} to be sent
 	 */
 	public void sendMessage(SelveXmlMessage message) {
-		getLogger().debug("trying to send message '{}'", message);
+		getLogger().info("sending message '{}'", message);
 		sendRaw(messageParser.messageToXml(message));
 	}
 
@@ -214,12 +214,12 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 	 */
 	public void sendRaw(String xml) {
 		if(connectionManager.isConnected()) {
-			getLogger().info("port is active!");
+			getLogger().debug("port is active!");
 			if(lock()) {
 				getLogger().debug("successfully locked device for writing!");
-				getLogger().info("sending xml: {} ...", xml);
+				getLogger().debug("sending xml: '{}'", xml);
 				connectionManager.write(xml);
-				getLogger().info("xml sent successful!");
+				getLogger().debug("xml sent successful!");
 			}
 			else {
 				getLogger().error("cannot lock device, due to there is already a method call in progress!");
@@ -283,7 +283,7 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 	}
 
 	public void handleIncomingMessage(SelveXmlMessage message) {
-		getLogger().debug("processing incoming messsage '{}'", message);
+		getLogger().info("processing incoming messsage '{}'", message);
         switch (message.getType()) {
 			case METHOD_CALL:
 				handleMethodCall((SelveXmlMethodCall) message);

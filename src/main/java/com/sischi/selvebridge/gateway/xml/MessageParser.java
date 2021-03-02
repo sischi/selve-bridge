@@ -145,7 +145,7 @@ public class MessageParser implements HasLogger {
         getLogger().trace("trying to parse messageBuffer: '{}'", messageBuffer);
         
         if (messageBuffer.contains(XML_MESSAGE_DELIMITER)) {
-            getLogger().debug("messageBuffer contains end of message token '{}'",
+            getLogger().trace("messageBuffer contains end of message token '{}'",
                     Utils.escapeString(XML_MESSAGE_DELIMITER));
             String[] chunks = messageBuffer.split(XML_MESSAGE_DELIMITER);
             getLogger().debug("split message buffer into {} pieces", chunks.length);
@@ -155,7 +155,7 @@ public class MessageParser implements HasLogger {
                 String chunk = chunks[i];
 
                 chunk = cleanXmlMessage(chunk);
-                getLogger().debug("trying to parse piece: '{}'", chunk);
+                getLogger().trace("trying to parse piece: '{}'", chunk);
                 SelveXmlMessage message = xmlToMessage(chunk);
                 if(message != null) {
                     getLogger().debug("successfully parsed xml '{}' to message '{}'", chunk, message);
@@ -168,7 +168,7 @@ public class MessageParser implements HasLogger {
                 }
             }
             messageBuffer = tempMessageBuffer;
-            getLogger().debug("message buffer after parsing: '{}'", messageBuffer);
+            getLogger().trace("message buffer after parsing: '{}'", messageBuffer);
         } else {
             getLogger().trace("no message delimiter found, so assuming that the message buffer does not contain any complete message.");
         }
@@ -196,7 +196,7 @@ public class MessageParser implements HasLogger {
     public String messageToXml(SelveXmlMessage message) {
         try {
             String xml = getXmlMapper().writeValueAsString(message);
-            getLogger().info("successfully serialized message '{}' to xml '{}'", message.toString(), xml);
+            getLogger().debug("successfully serialized message '{}' to xml '{}'", message.toString(), xml);
             postProcessParsedMessage(message);
             return xml;
         } catch (JsonProcessingException ex) {
@@ -213,7 +213,7 @@ public class MessageParser implements HasLogger {
     public SelveXmlMessage xmlToMessage(String xml) {
         try {
             SelveXmlMessage message = getXmlMapper().readValue(xml, SelveXmlMessage.class);
-            getLogger().info("successfully parsed xml '{}' to message '{}'", xml, message);
+            getLogger().debug("successfully parsed xml '{}' to message '{}'", xml, message);
             postProcessParsedMessage(message);
             return message;
         } catch (JsonProcessingException ex) {

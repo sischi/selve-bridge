@@ -63,7 +63,7 @@ public class ConversationManager implements HasLogger, SelveXmlMessageHandler, D
             if(!activeConversation.hasResponse()) {
                 getLogger().debug("putting the response '{}' in the active conversation", response);
                 activeConversation.setResponse(response);
-                getLogger().info("active conversation finished with response '{}'. Forgetting this conversion.", response);
+                getLogger().debug("active conversation finished with response '{}'. Forgetting this conversion.", response);
                 activeConversation = null;
             }
             else {
