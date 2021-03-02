@@ -120,10 +120,10 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
 
     @Override
     public void onMethodCall(SelveXmlMethodCall call) {
-        if(MethodNames.COMMAND_RESULT.equals(call.getMethodName())) {
+        if(MethodNames.Command.RESULT.equals(call.getMethodName())) {
             handleCommandResult(call);
         }
-        else if(MethodNames.EVENT_DEVICE.equals(call.getMethodName())) {
+        else if(MethodNames.Event.DEVICE.equals(call.getMethodName())) {
             handleDeviceStateChanged(call);
         }
     }

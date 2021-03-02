@@ -235,7 +235,7 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 	
 	public void handleMethodCall(SelveXmlMethodCall message) {
 		try {
-			if(MethodNames.EVENT_LOG.equals(message.getMethodName())) {
+			if(MethodNames.Event.LOG.equals(message.getMethodName())) {
 				handleIncomingLogEvent(message);
 			}
 		} catch(Exception ex) {
