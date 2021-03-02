@@ -35,6 +35,20 @@ public class GwServiceController extends AbstractSelveRestController {
         return conversation;
     }
 
+    @GetMapping("/reset")
+    public Conversation reset() {
+        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Service.reset());
+        checkConversation(conversation);
+        return conversation;
+    }
+
+    @GetMapping("/factoryReset")
+    public Conversation factoryReset() {
+        Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Service.factoryReset());
+        checkConversation(conversation);
+        return conversation;
+    }
+
     @GetMapping("/getLed")
     public Conversation getLed() {
         Conversation conversation = selveService.sendSynchronously((SelveXmlMethodCall) MessageFactory.Service.getLed());
