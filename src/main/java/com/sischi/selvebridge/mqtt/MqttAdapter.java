@@ -123,7 +123,13 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
      */
     public void subscribe(MqttSubscription subscription) {
         subscriptions.add(subscription);
-        doSubscribe(subscription);
+        getLogger().info("successfully registered subscription for topic '{}'", subscription.getTopic());
+        if(isConnected()) {
+            doSubscribe(subscription);
+        }
+        else {
+            getLogger().warn("mqtt client is not connected, so cannot subscribe to topic '{}' now", subscription.getTopic());
+        }
     }
 
     /**
@@ -182,6 +188,15 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
             options.setAutomaticReconnect(true);
             options.setCleanSession(true);
             options.setConnectionTimeout(10);
+            // if a username is configured add username and password authentication
+            if(mqttProperties.getUsername() != null && mqttProperties.getUsername().length() > 0) {
+                options.setUserName(mqttProperties.getUsername());
+                options.setPassword(mqttProperties.getPassword().toCharArray());
+                getLogger().debug("using auth: '{}'", mqttProperties.getUsername());
+            }
+            else {
+                getLogger().debug("using auth: no!");
+            }
             mqttClient.connect(options);
         } catch(Exception ex) {
             getLogger().error("could not connect to mqtt broker '{}'! something went wrong.", connectionString, ex);

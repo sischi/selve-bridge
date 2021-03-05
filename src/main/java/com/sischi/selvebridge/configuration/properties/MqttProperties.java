@@ -13,6 +13,8 @@ public class MqttProperties {
     private Integer qos = 0;
     private Boolean retain = true;
     private String prefix = "selve";
+    private String username = null;
+    private String password = null;
 
     public String getBroker() {
         return broker;
@@ -60,5 +62,29 @@ public class MqttProperties {
 
     public void setTopicPrefix(String topicPrefix) {
         this.prefix = topicPrefix;
+    }
+
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
