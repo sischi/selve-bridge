@@ -24,5 +24,5 @@ selvebridge:
     port: 1883
     qos: 0
     retain: true
-    prefix: "selve"
+    topicPrefix: "selve"
     
