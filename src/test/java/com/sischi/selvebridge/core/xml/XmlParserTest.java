@@ -64,7 +64,7 @@ public class XmlParserTest implements HasLogger {
             "<array>" +
             "<string>selve.GW.service.methodname</string>" +
             "<string>Parameter 1</string>" +
-            "<base64>11001100</base64>" +
+            //"<base64>11001100</base64>" +
             "<int>123</int>" +
             "</array>" +
             "</methodResponse>";
@@ -75,7 +75,7 @@ public class XmlParserTest implements HasLogger {
                 .withMethodName("selve.GW.service.methodname")
                 .withParameter(
                     new SelveXmlMethodParameter(ParameterType.STRING, "Parameter 1"),
-                    new SelveXmlMethodParameter(ParameterType.BASE64, "11001100"),
+                    //new SelveXmlMethodParameter(ParameterType.BASE64, "11001100"),
                     new SelveXmlMethodParameter(ParameterType.INT, 123)
                 );
 
@@ -89,7 +89,7 @@ public class XmlParserTest implements HasLogger {
             "<methodName>selve.GW.service.methodname</methodName>" +
             "<array>" +
             "<string>Parameter 1</string>" +
-            "<base64>11001100</base64>" +
+            //"<base64>11001100</base64>" +
             "<int>123</int>" +
             "</array>" +
             "</methodCall>";
@@ -100,7 +100,7 @@ public class XmlParserTest implements HasLogger {
                 .withMethodName("selve.GW.service.methodname")
                 .withParameter(
                     new SelveXmlMethodParameter(ParameterType.STRING, "Parameter 1"),
-                    new SelveXmlMethodParameter(ParameterType.BASE64, "11001100"),
+                    //new SelveXmlMethodParameter(ParameterType.BASE64, "11001100"),
                     new SelveXmlMethodParameter(ParameterType.INT, 123)
                 );
 
