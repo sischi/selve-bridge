@@ -48,6 +48,13 @@
             <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
 
+        <!-- add swagger ui endpoint -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
         <!-- exclude junit 4 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -61,6 +68,7 @@
             </exclusions>
         </dependency>
         
+        <!-- add junit 5 support -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
