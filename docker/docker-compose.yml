@@ -1,13 +1,10 @@
-version: "3.7"
+version: "3.6"
 
 services:
   selvebridge:
-    image: openjdk:8
+    build: .
+    image: adoptopenjdk-8
     container_name: selve-bridge
-
-    environment:
-      SELVEBRIDGE_MQTT_ENABLED: "true"
-      SELVEBRIDGE_MQTT_BROKER: "mqtt.broker.hostname"
 
     devices:
       - "/dev/ttyUSB0:/dev/ttyUSB0"
