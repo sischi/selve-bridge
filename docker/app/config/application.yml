@@ -1,0 +1,34 @@
+
+
+# configure the application
+selvebridge:
+
+  # deadlock watchdog properties
+  deadlock:
+    threshold: 60
+    watchdogInterval: 30
+
+  # configure the connection to the selve gateway
+  connection:
+    serialPort: /dev/selve-gateway
+    reconnectInterval: 15
+    watchdogInterval: 60
+
+  # enable and configure the connection to an external mqtt broker
+  mqtt:
+    enabled: false
+    broker: hostname
+    protocol: tcp
+    port: 1883
+    qos: 0
+    retain: true
+    topicPrefix: "selve"
+
+# specify the log level
+logging:
+  level:
+    root: info
+    com.sischi.selvebridge: trace
+
+# specify the desired port for the webserver running the REST-API
+server.port: 8080
