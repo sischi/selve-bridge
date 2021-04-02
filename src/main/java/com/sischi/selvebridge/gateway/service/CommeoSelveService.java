@@ -20,12 +20,24 @@ public class CommeoSelveService extends SelveService {
 
 
     public Conversation sendCommand(int deviceId, CommeoCommandPayload payload) {
-        SelveXmlMessage message = MessageFactory.Command.device(
-                deviceId,
-                payload.getCommand().getValue(),
-                CommeoCommandType.MANUAL.getValue(),
-                payload.getValue()
-            );
+        
+        SelveXmlMessage message = null;
+        
+        if(payload.getValue() != null) {
+            message = MessageFactory.Command.device(
+                    deviceId,
+                    payload.getCommand().getValue(),
+                    CommeoCommandType.MANUAL.getValue(),
+                    payload.getValue()
+                );
+        }
+        else {
+            message = MessageFactory.Command.device(
+                    deviceId,
+                    payload.getCommand().getValue(),
+                    CommeoCommandType.MANUAL.getValue()
+                );
+        }
         getLogger().info("sending command '{}'", message);
 
         Conversation conversation = sendSynchronously((SelveXmlMethodCall) message);
