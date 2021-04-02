@@ -68,7 +68,7 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
     public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
         String message = new String(mqttMessage.getPayload());
         getLogger().info("received message '{}' on topic '{}'", message, topic);
-
+        
         // remove the irrelevant part of the topic
         topic = topic.replace(mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/", "");
 
@@ -92,6 +92,7 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
             getLogger().error("could not parse payload '{}' to command!", message, ex);
             return;
         }
+        
         processCommand(deviceId, payload);
     }
 
@@ -99,11 +100,19 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
         getLogger().debug("processing command '{}' for device id '{}'", commandPayload, deviceId);
 
         // send command to the device
-        selveService.sendCommand(deviceId, commandPayload);
+        try {
+            selveService.sendCommand(deviceId, commandPayload);
+        } catch(Exception ex) {
+            getLogger().error("could not send command {}: {}", commandPayload, ex.getMessage(), ex);
+        }
 
         // query the current state of the device to publish it back to the device's mqtt topic
-        CommeoDeviceState deviceState = selveService.requestDeviceState(deviceId);
-        publishDeviceState(deviceState);
+        try {
+            //CommeoDeviceState deviceState = selveService.requestDeviceState(deviceId);
+            //publishDeviceState(deviceState);
+        } catch(Exception ex) {
+            getLogger().error("could not request device state for device id {}: {}", deviceId, ex.getMessage(), ex);
+        }
     }
 
     protected void publishDeviceState(CommeoDeviceState state) {
