@@ -1,7 +1,5 @@
 package com.sischi.selvebridge.gateway.models.commeo;
 
-import com.sischi.selvebridge.gateway.models.enums.CommeoCommand;
-
 public class CommeoCommandPayload {
 
     private CommeoCommand command;

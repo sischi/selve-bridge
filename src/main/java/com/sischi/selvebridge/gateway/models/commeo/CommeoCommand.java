@@ -1,4 +1,4 @@
-package com.sischi.selvebridge.gateway.models.enums;
+package com.sischi.selvebridge.gateway.models.commeo;
 
 public enum CommeoCommand {
     STOP(0),
