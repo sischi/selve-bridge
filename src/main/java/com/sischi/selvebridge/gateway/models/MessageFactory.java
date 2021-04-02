@@ -123,6 +123,16 @@ public class MessageFactory {
     }
 
     public static class Command {
+        public static SelveXmlMessage device(int deviceId, int command, int type) {
+            Validator.validateCommeoDeviceId(deviceId);
+            return new SelveXmlMethodCall()
+                .withMethodName(MethodNames.Command.DEVICE)
+                .withParameter(
+                    new SelveXmlMethodParameter(ParameterType.INT, deviceId),
+                    new SelveXmlMethodParameter(ParameterType.INT, command),
+                    new SelveXmlMethodParameter(ParameterType.INT, type)
+                );
+        }
         public static SelveXmlMessage device(int deviceId, int command, int type, int parameter) {
             Validator.validateCommeoDeviceId(deviceId);
             return new SelveXmlMethodCall()
