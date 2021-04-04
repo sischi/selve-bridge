@@ -1,6 +1,8 @@
 package com.sischi.selvebridge.util;
 
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 public class Utils {
 
@@ -36,6 +38,41 @@ public class Utils {
 
         String base64 = Base64.getEncoder().encodeToString(bytes);
         return base64;
+    }
+
+    public static List<Integer> readIdsFromBinaryMask(String binary) {
+        Validator.validateBinaryDeviceIdMask(binary);
+
+        List<Integer> ids = new ArrayList<>();
+        for(int currentByte = 0; currentByte < 8; currentByte++) {
+            for(int bit = 7; bit >= 0; bit--) {
+                if(binary.charAt((currentByte * 8) + bit) == '1') {
+                    int id = (currentByte * 8) + (7 - bit);
+                    ids.add(id);
+                }
+            }
+        }
+        return ids;
+    }
+
+    public static String writeIdsAsBinaryMask(List<Integer> ids) {
+        // initialize mask with '0'
+        char[] bits = new char[64];
+        for(int i = 0; i < 64; i++) {
+            bits[i] = '0';
+        }
+
+        // set positions of ids to '1'
+        ids.stream()
+            .filter(id -> id != null)
+            .forEach(id -> {
+                int targetByte = id / 8;
+                int bit = id % 8;
+                int pos = (targetByte * 8) + 7 - bit;
+                bits[pos] = '1';
+            });
+
+        return new String(bits);
     }
 
 
