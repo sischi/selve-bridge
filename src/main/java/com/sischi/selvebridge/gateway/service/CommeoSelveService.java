@@ -1,6 +1,9 @@
 package com.sischi.selvebridge.gateway.service;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.sischi.selvebridge.gateway.connection.Conversation;
 import com.sischi.selvebridge.gateway.models.MessageFactory;
 import com.sischi.selvebridge.gateway.models.commeo.CommeoCommandPayload;
@@ -14,30 +17,44 @@ import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodResponse;
 
 import org.springframework.stereotype.Component;
 
+import net.bytebuddy.dynamic.TargetType;
+
 
 @Component
 public class CommeoSelveService extends SelveService {
 
 
-    public Conversation sendCommand(int deviceId, CommeoCommandPayload payload) {
+    public Conversation sendCommand(CommeoCommandPayload payload) {
         
         SelveXmlMessage message = null;
         
-        if(payload.getValue() != null) {
-            message = MessageFactory.Command.device(
-                    deviceId,
+        switch (payload.getTargetType()) {
+            case DEVICE:
+                message = MessageFactory.Command.device(
+                    (int) payload.getTarget(),
                     payload.getCommand().getValue(),
                     CommeoCommandType.MANUAL.getValue(),
                     payload.getValue()
                 );
-        }
-        else {
-            message = MessageFactory.Command.device(
-                    deviceId,
+                break;
+            case GROUP:
+                message = MessageFactory.Command.group(
+                    (int) payload.getTarget(),
                     payload.getCommand().getValue(),
-                    CommeoCommandType.MANUAL.getValue()
+                    CommeoCommandType.MANUAL.getValue(),
+                    payload.getValue()
                 );
+                break;
+            case MANUAL_GROUP:
+                // TODO implement message for manual group
+                break;
+        
+            default:
+                throw new UnsupportedOperationException("target type '"+ payload.getTargetType() +"' not supported!");
         }
+        // TODO check target type and handle different target types
+        
+        
         getLogger().info("sending command '{}'", message);
 
         Conversation conversation = sendSynchronously((SelveXmlMethodCall) message);
@@ -72,6 +89,18 @@ public class CommeoSelveService extends SelveService {
         Conversation conversation = sendSynchronously((SelveXmlMethodCall) message);
 
         return parseDeviceState(conversation);
+    }
+
+    public List<CommeoDeviceState> requestGroupState(int groupId) {
+        List<CommeoDeviceState> deviceStates = new ArrayList<>();
+        getLogger().warn("'requestManualGroupState' is not yet implemented!");
+        return deviceStates;
+    }
+
+    public List<CommeoDeviceState> requestManualGroupState(String mask) {
+        List<CommeoDeviceState> deviceStates = new ArrayList<>();
+        getLogger().warn("'requestManualGroupState' is not yet implemented!");
+        return deviceStates;
     }
 
     protected CommeoDeviceState parseDeviceState(Conversation conversation) {

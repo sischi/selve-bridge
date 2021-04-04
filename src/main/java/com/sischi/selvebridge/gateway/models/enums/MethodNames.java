@@ -27,6 +27,13 @@ public class MethodNames {
         public static final String WRITE_MANUAL = "selve.GW.device.writeManual";
     }
 
+    public static class Group {
+        public static final String READ = "selve.GW.group.read";
+        public static final String WRITE = "selve.GW.group.write";
+        public static final String GET_IDS = "selve.GW.group.getIDs";
+        public static final String DELETE = "selve.GW.group.delete";
+    }
+
     public static class Command {
         public static final String DEVICE = "selve.GW.command.device";
         public static final String GROUP = "selve.GW.command.group";

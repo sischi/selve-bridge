@@ -122,38 +122,80 @@ public class MessageFactory {
         }
     }
 
-    public static class Command {
-        public static SelveXmlMessage device(int deviceId, int command, int type) {
-            Validator.validateCommeoDeviceId(deviceId);
+
+
+    public static class Group {
+        public static SelveXmlMessage read(int groupId) {
+            Validator.validateCommeoGroupId(groupId);
             return new SelveXmlMethodCall()
+                .withMethodName(MethodNames.Group.READ)
+                .withParameter(
+                    new SelveXmlMethodParameter(ParameterType.INT, groupId)
+                );
+        }
+
+        public static SelveXmlMessage write(int groupId, String mask, String name) {
+            Validator.validateCommeoGroupId(groupId);
+            Validator.validateBinaryDeviceIdMask(mask);
+            return new SelveXmlMethodCall()
+                .withMethodName(MethodNames.Group.READ)
+                .withParameter(
+                    new SelveXmlMethodParameter(ParameterType.INT, groupId),
+                    new SelveXmlMethodParameter(ParameterType.BASE64, mask)
+                );
+        }
+
+        public static SelveXmlMessage getIds(int groupId) {
+            Validator.validateCommeoGroupId(groupId);
+            return new SelveXmlMethodCall()
+                .withMethodName(MethodNames.Group.READ)
+                .withParameter(
+                    new SelveXmlMethodParameter(ParameterType.INT, groupId)
+                );
+        }
+
+        public static SelveXmlMessage delete(int groupId) {
+            Validator.validateCommeoGroupId(groupId);
+            return new SelveXmlMethodCall()
+                .withMethodName(MethodNames.Group.READ)
+                .withParameter(
+                    new SelveXmlMethodParameter(ParameterType.INT, groupId)
+                );
+        }
+    }
+
+
+
+
+    public static class Command {
+        public static SelveXmlMessage device(int deviceId, int command, int type, Integer parameter) {
+            Validator.validateCommeoDeviceId(deviceId);
+            SelveXmlMessage message = new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Command.DEVICE)
                 .withParameter(
                     new SelveXmlMethodParameter(ParameterType.INT, deviceId),
                     new SelveXmlMethodParameter(ParameterType.INT, command),
                     new SelveXmlMethodParameter(ParameterType.INT, type)
                 );
+            if(parameter != null) {
+                message.addParamater(new SelveXmlMethodParameter(ParameterType.INT, parameter));
+            }
+            
+            return message;
         }
-        public static SelveXmlMessage device(int deviceId, int command, int type, int parameter) {
-            Validator.validateCommeoDeviceId(deviceId);
-            return new SelveXmlMethodCall()
-                .withMethodName(MethodNames.Command.DEVICE)
-                .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, deviceId),
-                    new SelveXmlMethodParameter(ParameterType.INT, command),
-                    new SelveXmlMethodParameter(ParameterType.INT, type),
-                    new SelveXmlMethodParameter(ParameterType.INT, parameter)
-                );
-        }
-        public static SelveXmlMessage group(int groupId, int command, int type, int parameter) {
+        public static SelveXmlMessage group(int groupId, int command, int type, Integer parameter) {
             Validator.validateCommeoGroupId(groupId);
-            return new SelveXmlMethodCall()
+            SelveXmlMessage message = new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Command.GROUP)
                 .withParameter(
                     new SelveXmlMethodParameter(ParameterType.INT, groupId),
                     new SelveXmlMethodParameter(ParameterType.INT, command),
-                    new SelveXmlMethodParameter(ParameterType.INT, type),
-                    new SelveXmlMethodParameter(ParameterType.INT, parameter)
+                    new SelveXmlMethodParameter(ParameterType.INT, type)
                 );
+            if(parameter != null) {
+                message.addParamater(new SelveXmlMethodParameter(ParameterType.INT, parameter));
+            }
+            return message;
         }
     }
 }

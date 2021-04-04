@@ -4,6 +4,8 @@ public class CommeoCommandPayload {
 
     private CommeoCommand command;
     private Integer value;
+    private CommeoCommandTargetType targetType;
+    private Object target;
 
     public CommeoCommand getCommand() {
         return command;
@@ -21,8 +23,26 @@ public class CommeoCommandPayload {
         this.value = value;
     }
 
+    public CommeoCommandTargetType getTargetType() {
+        return targetType;
+    }
+
+    public void setTargetType(CommeoCommandTargetType targetType) {
+        this.targetType = targetType;
+    }
+
+    public Object getTarget() {
+        return target;
+    }
+
+    public void setTarget(Object target) {
+        this.target = target;
+    }
+
     @Override
     public String toString() {
-        return "[command="+ getCommand() +", value="+ getValue() +"]";
+        return "[command="+ getCommand() +", value="+ getValue() +", targetType="+ getTargetType() +", target="+ getTarget() +"]";
     }
+
+    
 }

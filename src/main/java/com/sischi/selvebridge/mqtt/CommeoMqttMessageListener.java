@@ -1,5 +1,9 @@
 package com.sischi.selvebridge.mqtt;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +11,7 @@ import com.sischi.selvebridge.configuration.properties.MqttProperties;
 import com.sischi.selvebridge.gateway.SelveBridge;
 import com.sischi.selvebridge.gateway.SelveXmlMessageHandler;
 import com.sischi.selvebridge.gateway.models.commeo.CommeoCommandPayload;
+import com.sischi.selvebridge.gateway.models.commeo.CommeoCommandTargetType;
 import com.sischi.selvebridge.gateway.models.commeo.CommeoDeviceState;
 import com.sischi.selvebridge.gateway.models.commeo.CommeoDeviceStateFactory;
 import com.sischi.selvebridge.gateway.models.enums.MethodNames;
@@ -29,8 +34,13 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
     private static final String KEYWORD_STATE = "state";
 
     private static final String PROTOCOL = "commeo";
+    private static final String TARGET_DEVICE = "device";
+    private static final String TARGET_GROUP = "group";
+    private static final String TARGET_GROUP_MANUAL = "groupman";
 
-    private String TOPIC_COMMAND = null;
+    private String TOPIC_DEVICE = null;
+    private String TOPIC_GROUP = null;
+    private String TOPIC_GROUP_MANUAL = null;
 
     @Autowired
     private MqttProperties mqttProperties;
@@ -52,15 +62,19 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
     }
 
     private void initTopics() {
-        TOPIC_COMMAND = mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/+/" + KEYWORD_COMMAND;
+        TOPIC_DEVICE = mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/" + TARGET_DEVICE + "/+/" + KEYWORD_COMMAND;
+        TOPIC_DEVICE = mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/" + TARGET_GROUP + "/+/" + KEYWORD_COMMAND;
+        TOPIC_DEVICE = mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/" + TARGET_GROUP_MANUAL + KEYWORD_COMMAND;
     }
 
     private String generateStateTopic(int deviceId) {
-        return mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/" + deviceId + "/" + KEYWORD_STATE;
+        return mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/" + TARGET_DEVICE + "/" + deviceId + "/" + KEYWORD_STATE;
     }
 
     private void makeSubscriptions() {
-        mqttAdapter.subscribe(new MqttSubscription(TOPIC_COMMAND, this));
+        mqttAdapter.subscribe(new MqttSubscription(TOPIC_DEVICE, this));
+        mqttAdapter.subscribe(new MqttSubscription(TOPIC_GROUP, this));
+        mqttAdapter.subscribe(new MqttSubscription(TOPIC_GROUP_MANUAL, this));
         selveBridge.addSelveXmlMessageHandler(this);
     }
 
@@ -69,22 +83,21 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
         String message = new String(mqttMessage.getPayload());
         getLogger().info("received message '{}' on topic '{}'", message, topic);
         
+        try {
+            handleMessageArrived(topic, message);
+        } catch(Exception ex) {
+            getLogger().error("an unhandled exception occured while handling incoming message '{}' on topic '{}'!", message, topic, ex);
+        }
+    }
+
+    private void handleMessageArrived(String topic, String message) {
         // remove the irrelevant part of the topic
         topic = topic.replace(mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/", "");
 
-        // [deviceId, KEYWORD_COMMAND]
+        // [targetType, (id), KEYWORD_COMMAND]
         String[] chunks = topic.split("/");
-        Integer deviceId = null;
 
-        // parse device id
-        try {
-            deviceId = Integer.parseInt(chunks[0]);
-        } catch (NumberFormatException ex) {
-            getLogger().error("could not parse '{}' to device id!", chunks[0]);
-            return;
-        }
-
-        // parse command payload
+        // parse command payload from message
         CommeoCommandPayload payload = null;
         try {
             payload = om.readValue(message, CommeoCommandPayload.class);
@@ -92,26 +105,83 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
             getLogger().error("could not parse payload '{}' to command!", message, ex);
             return;
         }
+
+        // parse target type from topic
+        CommeoCommandTargetType targetType = parseTargetTypeFromTopic(chunks[0]);
+        if(targetType != payload.getTargetType()) {
+            getLogger().warn("found target type '{}' in mqtt message payload but was received on '{}' topic! overwriting type of payload because the topic has higher priority.");
+            payload.setTargetType(targetType);
+        }
+
+        // if the target is part of the topic, we have to parse it, otherwise it is expected to be present in the mqtt message
+        if(Arrays.asList(CommeoCommandTargetType.DEVICE, CommeoCommandTargetType.GROUP).contains(targetType)) {
+            // parse target
+            Integer target = null;
+            try {
+                target = Integer.parseInt(chunks[1]);
+            } catch (NumberFormatException ex) {
+                getLogger().error("could not parse '{}' to target id!", chunks[1]);
+                return;
+            }
+            payload.setTarget(target);
+        }
         
-        processCommand(deviceId, payload);
+        processCommand(payload);
     }
 
-    protected void processCommand(int deviceId, CommeoCommandPayload commandPayload) {
-        getLogger().debug("processing command '{}' for device id '{}'", commandPayload, deviceId);
+    private CommeoCommandTargetType parseTargetTypeFromTopic(String topic) {
+        if(topic == null) throw new IllegalArgumentException("invalid target type 'null'!");
+
+        if(topic.equals(TARGET_DEVICE)) {
+            return CommeoCommandTargetType.DEVICE;
+        }
+        else if(topic.equals(TARGET_GROUP)) {
+            return CommeoCommandTargetType.GROUP;
+        }
+        else if(topic.equals(TARGET_GROUP_MANUAL)) {
+            return CommeoCommandTargetType.MANUAL_GROUP;
+        }
+        
+        throw new IllegalArgumentException("could not parse commeo target type from topic '"+ topic +"'!");
+    }
+
+    protected void processCommand(CommeoCommandPayload commandPayload) {
+        getLogger().debug("processing command '{}'", commandPayload);
 
         // send command to the device
         try {
-            selveService.sendCommand(deviceId, commandPayload);
+            selveService.sendCommand(commandPayload);
         } catch(Exception ex) {
             getLogger().error("could not send command {}: {}", commandPayload, ex.getMessage(), ex);
         }
 
+        // TODO implement requesting state for group or manual group
         // query the current state of the device to publish it back to the device's mqtt topic
         try {
-            //CommeoDeviceState deviceState = selveService.requestDeviceState(deviceId);
-            //publishDeviceState(deviceState);
+            List<CommeoDeviceState> deviceStates = new ArrayList<>();
+            switch (commandPayload.getTargetType()) {
+                case DEVICE:
+                    deviceStates.add(selveService.requestDeviceState((int) commandPayload.getTarget()));
+                    break;
+                case GROUP:
+                    deviceStates = selveService.requestGroupState((int) commandPayload.getTarget());
+                    break;
+                case MANUAL_GROUP:
+                    deviceStates = selveService.requestManualGroupState((String) commandPayload.getTarget());
+                    break;
+                default:
+                    getLogger().warn("unsupported target type '{}'", commandPayload.getTargetType());
+                    break;
+            }
+            if(deviceStates != null) {
+                deviceStates.stream()
+                        .filter(state -> state != null)
+                        .forEach(state -> {
+                            publishDeviceState(state);
+                        });
+            }
         } catch(Exception ex) {
-            getLogger().error("could not request device state for device id {}: {}", deviceId, ex.getMessage(), ex);
+            getLogger().error("could not request state for type '{}' and value '{}'", commandPayload.getTargetType(), commandPayload.getTarget(), ex);
         }
     }
 
