@@ -20,7 +20,7 @@ public class SelveXmlMessage {
     protected String methodName;
 
     @JacksonXmlElementWrapper(useWrapping = false)
-    protected List<SelveXmlMethodParameter> parameters;
+    protected List<SelveMethodParameter<?>> parameters;
 
     protected SelveXmlError error;
 
@@ -50,23 +50,23 @@ public class SelveXmlMessage {
         return this;
     }
 
-    public List<SelveXmlMethodParameter> getParameters() {
+    public List<SelveMethodParameter<?>> getParameters() {
         return parameters;
     }
 
-    public void setParameters(List<SelveXmlMethodParameter> parameters) {
+    public void setParameters(List<SelveMethodParameter<?>> parameters) {
         this.parameters = parameters;
     }
 
-    public void addParamater(SelveXmlMethodParameter parameter) {
+    public void addParamater(SelveMethodParameter<?> parameter) {
         if(parameters == null) {
             parameters = new ArrayList<>();
         }
         parameters.add(parameter);
     }
 
-    public SelveXmlMessage withParameter(SelveXmlMethodParameter... parameters) {
-        for(SelveXmlMethodParameter param : parameters) {
+    public SelveXmlMessage withParameter(SelveMethodParameter<?>... parameters) {
+        for(SelveMethodParameter<?> param : parameters) {
             addParamater(param);
         }
         return this;

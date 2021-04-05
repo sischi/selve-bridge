@@ -8,9 +8,9 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameter;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMessage;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodCall;
-import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodParameter;
 import com.sischi.selvebridge.util.HasLogger;
 
 
@@ -55,7 +55,7 @@ public class SelveXmlMethodCallDeserializer extends StdDeserializer<SelveXmlMeth
                 xmlParser.nextToken();
 
                 while(xmlParser.getCurrentToken() != JsonToken.END_OBJECT) {
-                    SelveXmlMethodParameter param = SelveXmlMessageDeserializer.parseParameter(xmlParser);
+                    SelveMethodParameter<?> param = SelveXmlMessageDeserializer.parseParameter(xmlParser);
                     message.addParamater(param);
                 }
             }

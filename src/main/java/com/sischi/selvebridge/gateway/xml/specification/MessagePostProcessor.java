@@ -3,9 +3,10 @@ package com.sischi.selvebridge.gateway.xml.specification;
 import java.util.List;
 
 import com.sischi.selvebridge.configuration.properties.ParamaterInformationConfig;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameter;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterInt;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterType;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMessage;
-import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodParameter;
-import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodParameter.ParameterType;
 import com.sischi.selvebridge.util.HasLogger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class MessagePostProcessor implements HasLogger {
         if(message.getParameters() != null) {
 
             int index = 0;
-            for (SelveXmlMethodParameter param : message.getParameters()) {
+            for (SelveMethodParameter<?> param : message.getParameters()) {
                 ParameterInformation paramInfo = paramInfoList.get(index);
                 if(paramInfo == null) {
                     continue;
@@ -42,8 +43,8 @@ public class MessagePostProcessor implements HasLogger {
 
                 // try to parse friendly value
                 try {
-                    if(paramInfo.getFriendlyValues() != null && paramInfo.getFriendlyValues().size() > 0 && param.getType() == ParameterType.INT) {
-                        String friendlyValue = paramInfo.getFriendlyValues().get((Integer) param.getValue());
+                    if(paramInfo.getFriendlyValues() != null && paramInfo.getFriendlyValues().size() > 0 && param.getType() == SelveMethodParameterType.INT) {
+                        String friendlyValue = paramInfo.getFriendlyValues().get(((SelveMethodParameterInt) param).getValue());
                         param.setFriendlyValue(friendlyValue);
                     }
                 } catch(Exception e) {

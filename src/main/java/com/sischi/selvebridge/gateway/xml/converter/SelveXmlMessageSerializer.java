@@ -8,8 +8,8 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameter;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMessage;
-import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodParameter;
 import com.sischi.selvebridge.util.HasLogger;
 
 
@@ -48,7 +48,7 @@ public class SelveXmlMessageSerializer extends StdSerializer<SelveXmlMessage> im
             xmlGen.writeFieldName(SelveXmlMessage.XML_TAG_METHOD_PARAMATER);
             xmlGen.writeStartObject();
             // write each existing parameter in the form: <type>value</type>
-            for(SelveXmlMethodParameter param : value.getParameters()) {
+            for(SelveMethodParameter<?> param : value.getParameters()) {
                 xmlGen.writeObjectField(param.getType().getXmlTag(), param.getValue());
             }
             xmlGen.writeEndObject();

@@ -8,11 +8,14 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
 import com.sischi.selvebridge.gateway.models.message.MessageType;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameter;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterBase64;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterInt;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterString;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterType;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMessage;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodCall;
-import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodParameter;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodResponse;
-import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodParameter.ParameterType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,22 +85,35 @@ public class SelveXmlMessageDeserializer extends StdDeserializer<SelveXmlMessage
      * @return the parsed @link{SelveXmlMethodParameter} object
      * @throws IOException the exception that may be throw by the xml parser
      */
-    public static SelveXmlMethodParameter parseParameter(FromXmlParser xmlParser) throws IOException {
-        SelveXmlMethodParameter param = new SelveXmlMethodParameter();
-        
+    public static SelveMethodParameter<?> parseParameter(FromXmlParser xmlParser) throws IOException {
         // the current token should be the fieldname of the parameter
 
         String fieldName = xmlParser.getText();
-        ParameterType type = ParameterType.parse(fieldName);
-        param.setType(type);
+        SelveMethodParameterType type = SelveMethodParameterType.parse(fieldName);
 
         // the next token should be the value of the parameter
         xmlParser.nextToken();
         String fieldValue = xmlParser.getText();
-        param.parseValue(fieldValue);
-
-        logger.debug("successfully parsed xml field '{}' with value '{}' to '{}'", fieldName, fieldValue, param);
-
+        
+        SelveMethodParameter<?> param = null;
+        try {
+            switch (type) {
+                case INT:
+                    param = new SelveMethodParameterInt(Integer.parseInt(fieldValue));
+                    break;
+                case STRING:
+                    param = new SelveMethodParameterString(fieldValue);
+                    break;
+                case BASE64:
+                    param = SelveMethodParameterBase64.ofBase64(fieldValue);
+                    break;
+            }
+            logger.debug("successfully parsed xml field '{}' with value '{}' to '{}'", fieldName, fieldValue, param);
+        } catch(Exception e) {
+            logger.warn("unexpected error while parsing parameter value '{}' of type '{}'! defaulting to type '{}'", fieldValue, type, SelveMethodParameterType.STRING);
+            param = new SelveMethodParameterString(fieldValue);
+        }
+        
         // move to the next token after the current parameter
         xmlParser.nextToken();
         

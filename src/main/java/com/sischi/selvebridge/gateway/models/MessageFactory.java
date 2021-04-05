@@ -1,10 +1,13 @@
 package com.sischi.selvebridge.gateway.models;
 
+import java.util.List;
+
 import com.sischi.selvebridge.gateway.models.enums.MethodNames;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterBase64;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterInt;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterString;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMessage;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodCall;
-import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodParameter;
-import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodParameter.ParameterType;
 import com.sischi.selvebridge.util.Validator;
 
 public class MessageFactory {
@@ -38,7 +41,7 @@ public class MessageFactory {
             return new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Service.SET_LED)
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, ledMode)
+                    new SelveMethodParameterInt(ledMode)
                 );
         }
     }
@@ -62,7 +65,7 @@ public class MessageFactory {
             return new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Device.GET_INFO)
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, deviceId)
+                    new SelveMethodParameterInt(deviceId)
                 );
         }
         public static SelveXmlMessage save(int deviceId) {
@@ -70,7 +73,7 @@ public class MessageFactory {
             return new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Device.SAVE)
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, deviceId)
+                    new SelveMethodParameterInt(deviceId)
                 );
         }
         public static SelveXmlMessage getValues(int deviceId) {
@@ -78,7 +81,7 @@ public class MessageFactory {
             return new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Device.GET_VALUES)
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, deviceId)
+                    new SelveMethodParameterInt(deviceId)
                 );
         }
         public static SelveXmlMessage getIds() {
@@ -90,8 +93,8 @@ public class MessageFactory {
             return new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Device.SET_FUNCTION)
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, deviceId),
-                    new SelveXmlMethodParameter(ParameterType.INT, function)
+                    new SelveMethodParameterInt(deviceId),
+                    new SelveMethodParameterInt(function)
                 );
         }
         public static SelveXmlMessage setLabel(int deviceId, String label) {
@@ -99,8 +102,8 @@ public class MessageFactory {
             return new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Device.SET_LABEL)
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, deviceId),
-                    new SelveXmlMethodParameter(ParameterType.STRING, label)
+                    new SelveMethodParameterInt(deviceId),
+                    new SelveMethodParameterString(label)
                 );
         }
         public static SelveXmlMessage setType(int deviceId, int type) {
@@ -108,8 +111,8 @@ public class MessageFactory {
             return new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Device.SET_TYPE)
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, deviceId),
-                    new SelveXmlMethodParameter(ParameterType.INT, type)
+                    new SelveMethodParameterInt(deviceId),
+                    new SelveMethodParameterInt(type)
                 );
         }
         public static SelveXmlMessage delete(int deviceId) {
@@ -117,7 +120,7 @@ public class MessageFactory {
             return new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Device.DELETE)
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, deviceId)
+                    new SelveMethodParameterInt(deviceId)
                 );
         }
     }
@@ -130,18 +133,18 @@ public class MessageFactory {
             return new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Group.READ)
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, groupId)
+                    new SelveMethodParameterInt(groupId)
                 );
         }
 
-        public static SelveXmlMessage write(int groupId, String mask, String name) {
+        public static SelveXmlMessage write(int groupId, List<Integer> ids, String name) {
             Validator.validateCommeoGroupId(groupId);
-            Validator.validateBinaryDeviceIdMask(mask);
             return new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Group.READ)
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, groupId),
-                    new SelveXmlMethodParameter(ParameterType.BASE64, mask)
+                    new SelveMethodParameterInt(groupId),
+                    SelveMethodParameterBase64.ofIdList(ids),
+                    new SelveMethodParameterString(name)
                 );
         }
 
@@ -150,7 +153,7 @@ public class MessageFactory {
             return new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Group.READ)
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, groupId)
+                    new SelveMethodParameterInt(groupId)
                 );
         }
 
@@ -159,7 +162,7 @@ public class MessageFactory {
             return new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Group.READ)
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, groupId)
+                    new SelveMethodParameterInt(groupId)
                 );
         }
     }
@@ -173,12 +176,12 @@ public class MessageFactory {
             SelveXmlMessage message = new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Command.DEVICE)
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, deviceId),
-                    new SelveXmlMethodParameter(ParameterType.INT, command),
-                    new SelveXmlMethodParameter(ParameterType.INT, type)
+                    new SelveMethodParameterInt(deviceId),
+                    new SelveMethodParameterInt(command),
+                    new SelveMethodParameterInt(type)
                 );
             if(parameter != null) {
-                message.addParamater(new SelveXmlMethodParameter(ParameterType.INT, parameter));
+                message.addParamater(new SelveMethodParameterInt(parameter));
             }
             
             return message;
@@ -188,12 +191,12 @@ public class MessageFactory {
             SelveXmlMessage message = new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Command.GROUP)
                 .withParameter(
-                    new SelveXmlMethodParameter(ParameterType.INT, groupId),
-                    new SelveXmlMethodParameter(ParameterType.INT, command),
-                    new SelveXmlMethodParameter(ParameterType.INT, type)
+                    new SelveMethodParameterInt(groupId),
+                    new SelveMethodParameterInt(command),
+                    new SelveMethodParameterInt(type)
                 );
             if(parameter != null) {
-                message.addParamater(new SelveXmlMethodParameter(ParameterType.INT, parameter));
+                message.addParamater(new SelveMethodParameterInt(parameter));
             }
             return message;
         }

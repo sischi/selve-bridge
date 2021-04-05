@@ -8,9 +8,11 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameter;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterInt;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterString;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlError;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMessage;
-import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodParameter;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodResponse;
 import com.sischi.selvebridge.util.HasLogger;
 
@@ -58,11 +60,11 @@ public class SelveXmlMethodResponseDeserializer extends StdDeserializer<SelveXml
                 // the next token should be the fieldname of the first parameter
                 xmlParser.nextToken();
 
-                SelveXmlMethodParameter methodNameParam = SelveXmlMessageDeserializer.parseParameter(xmlParser);
+                SelveMethodParameter<?> methodNameParam = SelveXmlMessageDeserializer.parseParameter(xmlParser);
                 message.setMethodName((String) methodNameParam.getValue());
 
                 while(xmlParser.getCurrentToken() != JsonToken.END_OBJECT) {
-                    SelveXmlMethodParameter param = SelveXmlMessageDeserializer.parseParameter(xmlParser);
+                    SelveMethodParameter<?> param = SelveXmlMessageDeserializer.parseParameter(xmlParser);
                     message.addParamater(param);
                 }
             }
@@ -109,13 +111,13 @@ public class SelveXmlMethodResponseDeserializer extends StdDeserializer<SelveXml
             // the next token should be the fieldname of the first parameter (in this case: 'string')
             xmlParser.nextToken();
 
-            SelveXmlMethodParameter descriptionParam = SelveXmlMessageDeserializer.parseParameter(xmlParser);
+            SelveMethodParameter<?> descriptionParam = SelveXmlMessageDeserializer.parseParameter(xmlParser);
 
             // the current token should be the fieldname of the second parameter (in this case: 'int')
-            SelveXmlMethodParameter codeParam = SelveXmlMessageDeserializer.parseParameter(xmlParser);
+            SelveMethodParameter<?> codeParam = SelveXmlMessageDeserializer.parseParameter(xmlParser);
 
-            error.withDescription((String) descriptionParam.getValue())
-                    .withCode((Integer) codeParam.getValue());
+            error.withDescription(((SelveMethodParameterString) descriptionParam).getValue())
+                    .withCode(((SelveMethodParameterInt) codeParam).getValue());
             
             // the current token should be the end of the parameters array ('}')
         }

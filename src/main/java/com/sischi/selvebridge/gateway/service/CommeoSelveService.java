@@ -10,14 +10,12 @@ import com.sischi.selvebridge.gateway.models.commeo.CommeoCommandPayload;
 import com.sischi.selvebridge.gateway.models.commeo.CommeoCommandType;
 import com.sischi.selvebridge.gateway.models.commeo.CommeoDeviceState;
 import com.sischi.selvebridge.gateway.models.commeo.CommeoDeviceStateFactory;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterInt;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMessage;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodCall;
-import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodParameter;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodResponse;
 
 import org.springframework.stereotype.Component;
-
-import net.bytebuddy.dynamic.TargetType;
 
 
 @Component
@@ -74,8 +72,8 @@ public class CommeoSelveService extends SelveService {
             return false;
         }
 
-        SelveXmlMethodParameter param = response.getParameters().get(0);
-        if((Integer) param.getValue() == 0) {
+        SelveMethodParameterInt param = (SelveMethodParameterInt) response.getParameters().get(0);
+        if(param.getValue() == 0) {
             getLogger().error("the command '{}' could not be executed: '{}'", conversation.getMethodCall(), response);
             return false;
         }

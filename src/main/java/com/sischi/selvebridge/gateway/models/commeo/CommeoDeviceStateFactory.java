@@ -3,8 +3,9 @@ package com.sischi.selvebridge.gateway.models.commeo;
 import java.util.List;
 
 import com.sischi.selvebridge.gateway.models.enums.DeviceState;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameter;
+import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterInt;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodCall;
-import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodParameter;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodResponse;
 import com.sischi.selvebridge.util.Utils;
 
@@ -30,7 +31,7 @@ public class CommeoDeviceStateFactory {
     
         CommeoDeviceState deviceState = new CommeoDeviceState();
 
-        List<SelveXmlMethodParameter> params = response.getParameters();
+        List<SelveMethodParameter<?>> params = response.getParameters();
 
         deviceState.setDeviceId((int) params.get(0).getValue());
         deviceState.setState(DeviceState.parse((int) params.get(1).getValue()));
@@ -49,12 +50,12 @@ public class CommeoDeviceStateFactory {
 
         CommeoDeviceState deviceState = new CommeoDeviceState();
 
-        List<SelveXmlMethodParameter> params = call.getParameters();
+        List<SelveMethodParameter<?>> params = call.getParameters();
 
-        deviceState.setDeviceId((int) params.get(0).getValue());
-        deviceState.setState(DeviceState.parse((int) params.get(1).getValue()));
-        deviceState.setPosition(Utils.positionToPercentage((int) params.get(2).getValue()));
-        deviceState.setTargetPosition(Utils.positionToPercentage((int) params.get(3).getValue()));
+        deviceState.setDeviceId(((SelveMethodParameterInt) params.get(0)).getValue());
+        deviceState.setState(DeviceState.parse(((SelveMethodParameterInt) params.get(1)).getValue()));
+        deviceState.setPosition(Utils.positionToPercentage(((SelveMethodParameterInt) params.get(2)).getValue()));
+        deviceState.setTargetPosition(Utils.positionToPercentage(((SelveMethodParameterInt) params.get(3)).getValue()));
 
         return deviceState;
     }

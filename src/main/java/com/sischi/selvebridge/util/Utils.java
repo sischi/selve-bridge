@@ -41,10 +41,11 @@ public class Utils {
     }
 
     public static List<Integer> readIdsFromBinaryMask(String binary) {
-        Validator.validateBinaryDeviceIdMask(binary);
+        Validator.validateBinaryMask(binary);
 
         List<Integer> ids = new ArrayList<>();
-        for(int currentByte = 0; currentByte < 8; currentByte++) {
+        int numOfBytes = binary.length() / 8;
+        for(int currentByte = 0; currentByte < numOfBytes; currentByte++) {
             for(int bit = 7; bit >= 0; bit--) {
                 if(binary.charAt((currentByte * 8) + bit) == '1') {
                     int id = (currentByte * 8) + (7 - bit);
