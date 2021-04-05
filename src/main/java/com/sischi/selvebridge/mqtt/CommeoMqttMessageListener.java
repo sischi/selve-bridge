@@ -63,8 +63,8 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
 
     private void initTopics() {
         TOPIC_DEVICE = mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/" + TARGET_DEVICE + "/+/" + KEYWORD_COMMAND;
-        TOPIC_DEVICE = mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/" + TARGET_GROUP + "/+/" + KEYWORD_COMMAND;
-        TOPIC_DEVICE = mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/" + TARGET_GROUP_MANUAL + KEYWORD_COMMAND;
+        TOPIC_GROUP = mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/" + TARGET_GROUP + "/+/" + KEYWORD_COMMAND;
+        TOPIC_GROUP_MANUAL = mqttProperties.getTopicPrefix() + "/" + PROTOCOL + "/" + TARGET_GROUP_MANUAL + KEYWORD_COMMAND;
     }
 
     private String generateStateTopic(int deviceId) {
