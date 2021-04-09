@@ -23,6 +23,8 @@ selvebridge:
     qos: 0
     retain: true
     topicPrefix: "selve"
+    username: "user"
+    password: "pass"
 
 # specify the log level
 logging:
