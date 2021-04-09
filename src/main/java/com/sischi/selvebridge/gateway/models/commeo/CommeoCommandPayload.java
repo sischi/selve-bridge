@@ -1,11 +1,14 @@
 package com.sischi.selvebridge.gateway.models.commeo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CommeoCommandPayload {
 
     private CommeoCommand command;
     private Integer value;
     private CommeoCommandTargetType targetType;
-    private Object target;
+    private List<Integer> target = new ArrayList<>();
 
     public CommeoCommand getCommand() {
         return command;
@@ -31,12 +34,21 @@ public class CommeoCommandPayload {
         this.targetType = targetType;
     }
 
-    public Object getTarget() {
+    public List<Integer> getTarget() {
         return target;
     }
 
-    public void setTarget(Object target) {
+    public void setTarget(List<Integer> target) {
         this.target = target;
+    }
+
+    public void setTarget(Integer... targets) {
+        this.target = new ArrayList<>();
+        for(Integer target : targets) {
+            if(target != null) {
+                this.target.add(target);
+            }
+        }
     }
 
     @Override

@@ -33,10 +33,10 @@ public class CommeoDeviceStateFactory {
 
         List<SelveMethodParameter<?>> params = response.getParameters();
 
-        deviceState.setDeviceId((int) params.get(0).getValue());
-        deviceState.setState(DeviceState.parse((int) params.get(1).getValue()));
-        deviceState.setPosition(Utils.positionToPercentage((int) params.get(2).getValue()));
-        deviceState.setTargetPosition(Utils.positionToPercentage((int) params.get(3).getValue()));
+        deviceState.setDeviceId((Integer) params.get(0).getValue());
+        deviceState.setState(DeviceState.parse((Integer) params.get(1).getValue()));
+        deviceState.setPosition(Utils.positionToPercentage((Integer) params.get(2).getValue()));
+        deviceState.setTargetPosition(Utils.positionToPercentage((Integer) params.get(3).getValue()));
 
         return deviceState;
     }

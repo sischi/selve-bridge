@@ -2,12 +2,15 @@ package com.sischi.selvebridge.gateway.models;
 
 import java.util.List;
 
+import com.sischi.selvebridge.gateway.models.commeo.CommeoCommand;
+import com.sischi.selvebridge.gateway.models.commeo.CommeoCommandType;
 import com.sischi.selvebridge.gateway.models.enums.MethodNames;
 import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterBase64;
 import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterInt;
 import com.sischi.selvebridge.gateway.models.message.SelveMethodParameterString;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMessage;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodCall;
+import com.sischi.selvebridge.util.Utils;
 import com.sischi.selvebridge.util.Validator;
 
 public class MessageFactory {
@@ -171,34 +174,59 @@ public class MessageFactory {
 
 
     public static class Command {
-        public static SelveXmlMessage device(int deviceId, int command, int type, Integer parameter) {
+        public static SelveXmlMessage device(int deviceId, CommeoCommand command, CommeoCommandType type, Integer parameter) {
             Validator.validateCommeoDeviceId(deviceId);
             SelveXmlMessage message = new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Command.DEVICE)
-                .withParameter(
-                    new SelveMethodParameterInt(deviceId),
-                    new SelveMethodParameterInt(command),
-                    new SelveMethodParameterInt(type)
-                );
-            if(parameter != null) {
-                message.addParamater(new SelveMethodParameterInt(parameter));
-            }
-            
+                .withParameter(new SelveMethodParameterInt(deviceId));
+            finishCommandMessage(message, command, type, parameter);
             return message;
         }
-        public static SelveXmlMessage group(int groupId, int command, int type, Integer parameter) {
+        public static SelveXmlMessage group(int groupId, CommeoCommand command, CommeoCommandType type, Integer parameter) {
             Validator.validateCommeoGroupId(groupId);
             SelveXmlMessage message = new SelveXmlMethodCall()
                 .withMethodName(MethodNames.Command.GROUP)
-                .withParameter(
-                    new SelveMethodParameterInt(groupId),
-                    new SelveMethodParameterInt(command),
-                    new SelveMethodParameterInt(type)
+                .withParameter(new SelveMethodParameterInt(groupId));
+            finishCommandMessage(message, command, type, parameter);
+            return message;
+        }
+        public static SelveXmlMessage groupMan(List<Integer> deviceIds, CommeoCommand command, CommeoCommandType type, Integer parameter) {
+            Validator.validateCommeoDeviceIds(deviceIds);
+            SelveXmlMessage message = new SelveXmlMethodCall()
+                .withMethodName(MethodNames.Command.GROUP_MAN)
+                .withParameter(SelveMethodParameterBase64.ofIdList(deviceIds));
+            finishCommandMessage(message, command, type, parameter);
+            return message;
+        }
+        private static void finishCommandMessage(SelveXmlMessage message, CommeoCommand command, CommeoCommandType type, Integer parameter) {
+            message.withParameter(
+                    new SelveMethodParameterInt(command.getValue()),
+                    new SelveMethodParameterInt(type.getValue())
                 );
             if(parameter != null) {
-                message.addParamater(new SelveMethodParameterInt(parameter));
+                SelveMethodParameterInt param = null;
+                switch (command) {
+                    case DRIVE_POS:
+                        param = new SelveMethodParameterInt(Utils.percentageToPosition(parameter));
+                        param.setFriendlyName("position");
+                        param.setFriendlyValue(parameter +"%");
+                        message.addParamater(param);
+                        break;
+                    case STEP_UP:
+                    case STEP_DOWN:
+                        param = new SelveMethodParameterInt(parameter);
+                        param.setFriendlyName("angle");
+                        param.setFriendlyValue(parameter +"°");
+                        message.addParamater(param);
+                        break;
+                    default:
+                        message.addParamater(new SelveMethodParameterInt(parameter));
+                        break;
+                }
             }
-            return message;
+            else {
+                message.addParamater(new SelveMethodParameterInt(0));
+            }
         }
     }
 }

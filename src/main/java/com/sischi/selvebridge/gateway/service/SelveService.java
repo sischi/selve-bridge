@@ -5,6 +5,7 @@ import com.sischi.selvebridge.gateway.connection.Conversation;
 import com.sischi.selvebridge.gateway.connection.ConversationManager;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMessage;
 import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodCall;
+import com.sischi.selvebridge.gateway.models.message.SelveXmlMethodResponse;
 import com.sischi.selvebridge.util.HasLogger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,21 @@ public class SelveService implements HasLogger {
         }
 
         return conversation;
+    }
+
+    protected boolean checkConversationSuccess(Conversation conversation) {
+        if(!conversation.hasResponse()) {
+            getLogger().error("got no response from selve gateway for command '{}'!", conversation.getMethodCall());
+            return false;
+        }
+
+        SelveXmlMethodResponse response = conversation.getResponse();
+        if(response.isError()) {
+            getLogger().error("received error response '{}' for command '{}'", response, conversation.getMethodCall());
+            return false;
+        }
+
+        return true;
     }
 
 }

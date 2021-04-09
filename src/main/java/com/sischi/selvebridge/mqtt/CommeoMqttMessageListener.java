@@ -36,7 +36,7 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
     private static final String PROTOCOL = "commeo";
     private static final String TARGET_DEVICE = "device";
     private static final String TARGET_GROUP = "group";
-    private static final String TARGET_GROUP_MANUAL = "groupman";
+    private static final String TARGET_GROUP_MANUAL = "mangroup";
 
     private String TOPIC_DEVICE = null;
     private String TOPIC_GROUP = null;
@@ -113,8 +113,9 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
             payload.setTargetType(targetType);
         }
 
-        // if the target is part of the topic, we have to parse it, otherwise it is expected to be present in the mqtt message
-        if(Arrays.asList(CommeoCommandTargetType.DEVICE, CommeoCommandTargetType.GROUP).contains(targetType)) {
+        // if the target is part of the topic, we have to parse it, otherwise the target is expected to be a list of device ids
+        // that may be empty and be present in the mqtt message payload
+        if(targetType == CommeoCommandTargetType.DEVICE || targetType == CommeoCommandTargetType.GROUP) {
             // parse target
             Integer target = null;
             try {
@@ -155,19 +156,18 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
             getLogger().error("could not send command {}: {}", commandPayload, ex.getMessage(), ex);
         }
 
-        // TODO implement requesting state for group or manual group
-        // query the current state of the device to publish it back to the device's mqtt topic
+        // query the current state of the affected device to publish it back to the device's mqtt topic
         try {
             List<CommeoDeviceState> deviceStates = new ArrayList<>();
             switch (commandPayload.getTargetType()) {
                 case DEVICE:
-                    deviceStates.add(selveService.requestDeviceState((int) commandPayload.getTarget()));
+                    deviceStates.add(selveService.requestDeviceState(commandPayload.getTarget().get(0)));
                     break;
                 case GROUP:
-                    deviceStates = selveService.requestGroupState((int) commandPayload.getTarget());
+                    deviceStates = selveService.requestGroupState(commandPayload.getTarget().get(0));
                     break;
                 case MANUAL_GROUP:
-                    deviceStates = selveService.requestManualGroupState((String) commandPayload.getTarget());
+                    deviceStates = selveService.requestManualGroupState(commandPayload.getTarget());
                     break;
                 default:
                     getLogger().warn("unsupported target type '{}'", commandPayload.getTargetType());

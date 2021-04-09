@@ -37,6 +37,7 @@ public class MethodNames {
     public static class Command {
         public static final String DEVICE = "selve.GW.command.device";
         public static final String GROUP = "selve.GW.command.group";
+        public static final String GROUP_MAN = "selve.GW.command.groupMan";
         public static final String RESULT = "selve.GW.command.result";
     }
 

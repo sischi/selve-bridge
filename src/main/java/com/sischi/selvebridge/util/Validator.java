@@ -1,10 +1,19 @@
 package com.sischi.selvebridge.util;
 
+import java.util.List;
+
 public class Validator {
     
 
     public static void validateCommeoDeviceId(int deviceId) {
         if(deviceId < 0 || deviceId > 63) throw new IllegalArgumentException("deviceId must be between 0 and 63, but found '"+ deviceId +"'");
+    }
+
+    public static void validateCommeoDeviceIds(List<Integer> deviceIds) {
+        if(deviceIds == null) throw new IllegalArgumentException("list of device ids should not be null!");
+        for(Integer deviceId : deviceIds) {
+            if(deviceId < 0 || deviceId > 63) throw new IllegalArgumentException("deviceId must be between 0 and 63, but found '"+ deviceId +"'");
+        }
     }
 
 	public static void validateCommeoGroupId(int groupId) {

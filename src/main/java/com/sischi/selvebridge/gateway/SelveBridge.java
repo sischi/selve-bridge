@@ -269,7 +269,7 @@ public class SelveBridge implements HasLogger, DataReceivedHandler, IncomingXmlM
 						"code='"+ message.getParameters().get(2).getValue() +"', "+
 						"value='"+ message.getParameters().get(3).getValue() +"', "+
 						"description='"+ message.getParameters().get(4).getValue() +"']";
-		switch ((int) message.getParameters().get(0).getValue()) {
+		switch ((Integer) message.getParameters().get(0).getValue()) {
 			case 1:
 				getLogger().warn(log);
 				break;
