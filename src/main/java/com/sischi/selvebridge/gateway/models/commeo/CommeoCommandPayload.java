@@ -42,7 +42,7 @@ public class CommeoCommandPayload {
         this.target = target;
     }
 
-    public void setTarget(Integer... targets) {
+    public void addTarget(Integer... targets) {
         this.target = new ArrayList<>();
         for(Integer target : targets) {
             if(target != null) {

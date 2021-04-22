@@ -110,7 +110,7 @@ public class SelveXmlMessageDeserializer extends StdDeserializer<SelveXmlMessage
             }
             logger.debug("successfully parsed xml field '{}' with value '{}' to '{}'", fieldName, fieldValue, param);
         } catch(Exception e) {
-            logger.warn("unexpected error while parsing parameter value '{}' of type '{}'! defaulting to type '{}'", fieldValue, type, SelveMethodParameterType.STRING);
+            logger.warn("unexpected error while parsing parameter value '{}' of type '{}'! defaulting to type '{}'", fieldValue, type, SelveMethodParameterType.STRING, e);
             param = new SelveMethodParameterString(fieldValue);
         }
         

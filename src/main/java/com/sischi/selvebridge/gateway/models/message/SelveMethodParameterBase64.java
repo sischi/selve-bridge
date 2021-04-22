@@ -2,6 +2,7 @@ package com.sischi.selvebridge.gateway.models.message;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.sischi.selvebridge.util.Utils;
 
@@ -19,7 +20,7 @@ public class SelveMethodParameterBase64 extends SelveMethodParameter<String> {
         this.value = value;
         setBinary(Utils.base64ToBinary(value));
         setIds(Utils.readIdsFromBinaryMask(getBinary()));
-        setFriendlyValue(getBinary());
+        setFriendlyValue(Utils.formatBinaryAsFriendlyValue(getBinary()));
         setFriendlyName(friendlyName);
     }
 
@@ -40,7 +41,7 @@ public class SelveMethodParameterBase64 extends SelveMethodParameter<String> {
     }
 
     protected void applyFriendlyNameAndValue() {
-        setFriendlyValue(getBinary());
+        setFriendlyValue(Utils.formatBinaryAsFriendlyValue(getBinary()));
         switch(getBinary() != null ? getBinary().length() : -1) {
             case 64:
                 setFriendlyName("device id mask");
@@ -60,7 +61,7 @@ public class SelveMethodParameterBase64 extends SelveMethodParameter<String> {
         param.setBinary(binary);
         param.setValue(Utils.binaryToBase64(binary));
         param.setIds(Utils.readIdsFromBinaryMask(param.getBinary()));
-        param.setFriendlyValue(param.getBinary());
+        param.setFriendlyValue(Utils.formatBinaryAsFriendlyValue(param.getBinary()));
         return param;
     }
 
@@ -69,7 +70,7 @@ public class SelveMethodParameterBase64 extends SelveMethodParameter<String> {
         param.setIds(Arrays.asList(ids));
         param.setBinary(Utils.writeIdsAsBinaryMask(param.getIds()));
         param.setValue(Utils.binaryToBase64(param.getBinary()));
-        param.setFriendlyValue(param.getBinary());
+        param.setFriendlyValue(Utils.formatBinaryAsFriendlyValue(param.getBinary()));
         return param;
     }
 
@@ -78,10 +79,20 @@ public class SelveMethodParameterBase64 extends SelveMethodParameter<String> {
         param.setIds(ids);
         param.setBinary(Utils.writeIdsAsBinaryMask(param.getIds()));
         param.setValue(Utils.binaryToBase64(param.getBinary()));
-        param.setFriendlyValue(param.getBinary());
+        param.setFriendlyValue(Utils.formatBinaryAsFriendlyValue(param.getBinary()));
         return param;
     }
 
-    
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() +"=["+
+                "type='"+ type +"', "+
+                "value='"+ value.toString() +"', "+
+                "binary='"+ binary +"', "+
+                "ids='"+ (ids != null ? ids.stream().map(id -> id.toString()).collect(Collectors.joining(",")) : "null") +"', "+
+                "friendlyName='"+ friendlyName +"', "+
+                "friendlyValue='"+ friendlyValue +"'"+
+            "]";
+    }
 
 }

@@ -124,7 +124,7 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
                 getLogger().error("could not parse '{}' to target id!", chunks[1]);
                 return;
             }
-            payload.setTarget(target);
+            payload.addTarget(target);
         }
         
         processCommand(payload);

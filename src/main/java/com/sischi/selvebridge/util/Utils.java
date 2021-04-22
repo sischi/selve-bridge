@@ -19,7 +19,7 @@ public class Utils {
         byte[] bytes = Base64.getDecoder().decode(base64);
         String binary = "";
         for(byte b : bytes) {
-            binary += ((binary.length() > 0 ? " " : "") + String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0'));
+            binary += String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0');
         }
         return binary;
     }
@@ -38,6 +38,19 @@ public class Utils {
 
         String base64 = Base64.getEncoder().encodeToString(bytes);
         return base64;
+    }
+
+    public static String formatBinaryAsFriendlyValue(String binary) {
+        if(binary == null) return null;
+
+        String friendlyValue = "";
+        for(int i = 0; i < binary.length(); i++) {
+            if(i > 0 && i % 8 == 0) {
+                friendlyValue += " ";
+            }
+            friendlyValue += binary.charAt(i);
+        }
+        return friendlyValue;
     }
 
     public static List<Integer> readIdsFromBinaryMask(String binary) {
