@@ -121,7 +121,7 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
             try {
                 target = Integer.parseInt(chunks[1]);
             } catch (NumberFormatException ex) {
-                getLogger().error("could not parse '{}' to target id!", chunks[1]);
+                getLogger().error("could not parse '{}' to target id!", chunks[1], ex);
                 return;
             }
             payload.addTarget(target);
@@ -177,6 +177,7 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
                 deviceStates.stream()
                         .filter(state -> state != null)
                         .forEach(state -> {
+                            getLogger().debug("device state to publish: '"+ state.toString() +"'");
                             publishDeviceState(state);
                         });
             }
@@ -213,8 +214,8 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
 
     protected void handleDeviceStateChanged(SelveXmlMethodCall call) {
         getLogger().info("received device state changed event: '{}'", call.toString());
-        CommeoDeviceState state = CommeoDeviceStateFactory.parseFromDeviceStateEvent(call);
-        publishDeviceState(state);
+        //CommeoDeviceState state = CommeoDeviceStateFactory.parseFromDeviceStateEvent(call);
+        //publishDeviceState(state);
     }
     
 }

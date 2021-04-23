@@ -196,8 +196,8 @@ public class MessageParser implements HasLogger {
     public String messageToXml(SelveXmlMessage message) {
         try {
             String xml = getXmlMapper().writeValueAsString(message);
-            getLogger().debug("successfully serialized message '{}' to xml '{}'", message.toString(), xml);
             postProcessParsedMessage(message);
+            getLogger().debug("successfully serialized message '{}' to xml '{}'", message.toString(), xml);
             return xml;
         } catch (JsonProcessingException ex) {
             getLogger().error("could not serialize message '{}'!", message, ex);
@@ -213,8 +213,8 @@ public class MessageParser implements HasLogger {
     public SelveXmlMessage xmlToMessage(String xml) {
         try {
             SelveXmlMessage message = getXmlMapper().readValue(xml, SelveXmlMessage.class);
-            getLogger().debug("successfully parsed xml '{}' to message '{}'", xml, message);
             postProcessParsedMessage(message);
+            getLogger().debug("successfully parsed xml '{}' to message '{}'", xml, message);
             return message;
         } catch (JsonProcessingException ex) {
             getLogger().error("could not parse message from xml '{}'!", xml, ex);

@@ -91,15 +91,15 @@ public class SelveXmlMessage {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() +"=["+
-            "type="+ type +", "+
-            "methodName="+ methodName +", "+
-            "error="+ error +", "+
-            "parameters={"+
+        return this.getClass().getSimpleName() +"=[\n"+
+            "type="+ type +",\n "+
+            "methodName="+ methodName +",\n "+
+            "error="+ error +",\n "+
+            "parameters={\n"+
                 (parameters != null
-                ? parameters.stream().map(param -> param.toString()).collect(Collectors.joining(", "))
+                ? parameters.stream().map(param -> param.toString()).collect(Collectors.joining(",\n "))
                 : "")
-                +"}"+
+                +"}\n"+
             "]";
     }
 }
