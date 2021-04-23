@@ -12,7 +12,11 @@ import com.sischi.selvebridge.util.ReconnectThread;
 import com.sischi.selvebridge.util.ConnectionWatchdog.ConnectionWatchdogHandler;
 import com.sischi.selvebridge.util.ReconnectThread.ReconnectThreadHandler;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
+import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
+import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -42,10 +46,10 @@ import org.springframework.stereotype.Component;
     matchIfMissing = false
 )
 @Component
-public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, ReconnectThreadHandler {
+public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, ReconnectThreadHandler, MqttCallback {
 
     @Autowired private MqttProperties mqttProperties;
-    private MqttClient mqttClient = null;
+    private MqttAsyncClient mqttClient = null;
     private String connectionString = null;
 
     private ConnectionWatchdog connectionWatchdog = null;
@@ -76,14 +80,14 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
         initConnectionString();
         connect();
 
-        if(isConnected()) {
-            getLogger().debug("mqtt client succesfully connected to broker '{}'!", connectionString);
-            connectionWatchdog.start();
-        }
-        else {
-            getLogger().error("mqtt client connection FAILED!!");
-            reconnectThread.start();
-        }
+        // if(isConnected()) {
+        //     getLogger().debug("mqtt client succesfully connected to broker '{}'!", connectionString);
+        //     connectionWatchdog.start();
+        // }
+        // else {
+        //     getLogger().error("mqtt client connection FAILED!!");
+        //     reconnectThread.start();
+        // }
     }
 
     /**
@@ -99,10 +103,11 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
 
         // try to publish the mqtt message
         try {
-            mqttClient.publish(topic, mqttMessage);
-            getLogger().debug("successfully published mqtt message '"+ message +"' on topic '"+ topic +"'!");
-        } catch (MqttException e) {
-            getLogger().error("could not publish mqtt message '{}' on topic '{}'!", message, topic);
+            getLogger().debug("publishing mqtt message '{}' on topic '' ...", message, topic);
+            IMqttDeliveryToken token = mqttClient.publish(topic, mqttMessage);
+            getLogger().debug("published mqtt message '{}' on topic '{}' with message id '{}'!", message, topic, token.getMessageId());
+        } catch (Exception e) {
+            getLogger().error("could not publish mqtt message '{}' on topic '{}'!", message, topic, e);
         }
     }
 
@@ -183,7 +188,7 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
     @Override
     public void connect() {
         try {
-            mqttClient = new MqttClient(connectionString, "selvebridge");
+            mqttClient = new MqttAsyncClient(connectionString, "selvebridge");
             MqttConnectOptions options = new MqttConnectOptions();
             options.setAutomaticReconnect(true);
             options.setCleanSession(true);
@@ -197,7 +202,18 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
             else {
                 getLogger().debug("using auth: no!");
             }
-            mqttClient.connect(options);
+            mqttClient.connect(options, null, new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    getLogger().debug("mqtt client succesfully connected to broker '{}'!", connectionString);
+                    handleSuccessfulReconnect();
+                }
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    getLogger().error("mqtt client connection FAILED!!", exception);
+                    reconnectThread.start();
+                }
+            });
         } catch(Exception ex) {
             getLogger().error("could not connect to mqtt broker '{}'! something went wrong.", connectionString, ex);
         }
@@ -234,6 +250,26 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
     @Override
     public void handleLostConnection() {
         reconnectThread.start();
+    }
+
+    @Override
+    public void connectionLost(Throwable cause) {
+        getLogger().warn("the connection is lost!");
+        handleLostConnection();
+    }
+
+    @Override
+    public void messageArrived(String topic, MqttMessage message) throws Exception {
+        getLogger().info("new message arrived on topic '{}': '{}'", topic, new String(message.getPayload()));
+    }
+
+    @Override
+    public void deliveryComplete(IMqttDeliveryToken token) {
+        try {
+            getLogger().info("successfully delivered mqtt message '{}' on topic '{}' with message id '{}'!", new String(token.getMessage().getPayload()), token.getTopics()[0], token.getMessageId());
+        } catch(Exception ex) {
+            getLogger().warn("could not log delivery complete token for message id '{}'", token.getMessageId(), ex);
+        }
     }
 
     
