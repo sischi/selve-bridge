@@ -16,7 +16,7 @@ spring:
 selvebridge:
   deadlock:
     threshold: 60
-    watchdogInterval: 30
+    watchdogInterval: 300
   connection:
     serialPort: /dev/ttyUSBX
     reconnectInterval: 15
@@ -26,7 +26,9 @@ selvebridge:
     broker: hostname
     protocol: tcp
     port: 1883
-    qos: 0
-    retain: true
+    qos: 1
+    retain: false
     topicPrefix: "selve"
+    username: ""
+    password: ""
     
