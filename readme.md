@@ -43,6 +43,18 @@ Currently only **commeo** devices, especially shutters, are supported. You can i
     }
     ``` 
 - state-topic payload
+    ```json
+    {
+        "deviceId": 0,
+        "label": "device name",
+        "availability": null,
+        "type": null,
+        "state": "DRIVE_DOWN",
+        "position": 33,
+        "targetPosition": 50,
+        "dayMode": null
+    }
+    ```
 
 # Installation
 
@@ -146,9 +158,11 @@ SELVEBRIDGE_MQTT_PASSWORD | string | "" | the password used to authenticate agai
 
 # Usage
 
-Because this app offers a MQTT interface you can easily integrate your selve devices in any of the well known smart home systems (Home Assistant, Fhem, OpenHab, etc.). You just have to configure the MQTT topics correctly.
+Because this app offers a MQTT interface you can easily integrate your selve devices in any of the well known smart home systems (Home-Assistant, Fhem, OpenHab, etc.). You just have to configure the MQTT topics correctly.
 
-## home assistant
+## home-assistant
+
+For home-assistant you can setup your selve covers with the help of `MQTT cover` instances. From the home-assistant point of view, a position of 0 (percent) will be recognized as closed and 100 (percent) will seen as opened whereas from the Selve gateway point of view a percentage value of 0 will be interpreted as the "up-most" position (completely open) and a percentage value of 100 will be interpreted as the "bottom-most" position (completely closed). So we have to invert the position (`100 - position`) when publishing the target value and interpreting the current value from the state topic.
 
 ```yaml
 cover:
