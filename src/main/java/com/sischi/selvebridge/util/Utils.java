@@ -91,11 +91,11 @@ public class Utils {
 
 
     public static int percentageToPosition(int percentage) {
-        return POSITION_MIN + ((POSITION_MAX - POSITION_MIN) * percentage / 100);
+        return POSITION_MIN + (((POSITION_MAX - POSITION_MIN) * percentage) / 100);
     }
 
     public static int positionToPercentage(int position) {
-        return (position - POSITION_MIN) / (POSITION_MAX - POSITION_MIN) * 100;
+        return ((position - POSITION_MIN) * 100) / (POSITION_MAX - POSITION_MIN);
     }
 
 }
