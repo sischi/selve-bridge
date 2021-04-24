@@ -7,7 +7,7 @@
     <groupId>com.sischi</groupId>
     <artifactId>selve-bridge</artifactId>
     <packaging>jar</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -48,6 +48,13 @@
             <artifactId>jackson-dataformat-xml</artifactId>
         </dependency>
 
+        <!-- add swagger ui endpoint -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-boot-starter</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
         <!-- exclude junit 4 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -61,6 +68,7 @@
             </exclusions>
         </dependency>
         
+        <!-- add junit 5 support -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -75,6 +83,30 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- use git flow branching model -->
+            <plugin>
+                <groupId>com.amashchenko.maven.plugin</groupId>
+                <artifactId>gitflow-maven-plugin</artifactId>
+                <version>1.16.0</version>
+                <configuration>                
+                    <installProject>false</installProject>
+                    <verbose>false</verbose>
+                    <pushRemote>false</pushRemote>
+                    <fetchRemote>false</fetchRemote>
+
+                    <gitFlowConfig>
+                        <productionBranch>master</productionBranch>
+                        <developmentBranch>develop</developmentBranch>
+                        <featureBranchPrefix>feature/</featureBranchPrefix>
+                        <releaseBranchPrefix>release/</releaseBranchPrefix>
+                        <hotfixBranchPrefix>hotfix/</hotfixBranchPrefix>
+                        <supportBranchPrefix>support/</supportBranchPrefix>
+                        <versionTagPrefix>v</versionTagPrefix>
+                        <origin>origin</origin>
+                    </gitFlowConfig>
+                </configuration>
             </plugin>
         </plugins>
     </build>

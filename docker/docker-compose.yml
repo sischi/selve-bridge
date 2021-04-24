@@ -1,0 +1,21 @@
+version: "3.6"
+
+services:
+  selvebridge:
+    build: .
+    image: selve-bridge:latest
+    container_name: selve-bridge
+
+    environment:
+      - TZ=Europe/Berlin
+
+    devices:
+      - "/dev/ttyUSB0:/dev/ttyUSB0"
+    
+    ports:
+      - "8080:8080"
+    
+    volumes:
+      - ./bin:/selve-bridge/bin
+      - ./config:/selve-bridge/config
+

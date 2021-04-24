@@ -9,3 +9,10 @@
 
 # build process
 target/
+
+# generated folders
+selvebridge-*
+docker/app/selvebridge-*
+
+# testing
+/docker/bin/*.jar

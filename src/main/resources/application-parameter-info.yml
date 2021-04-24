@@ -1,0 +1,273 @@
+
+
+parameter-information-config:
+
+  # ------------------------------
+  #       METHOD CALLS
+  # ------------------------------
+
+  method-calls:
+    
+    # -----------------------------
+    #          SERVICE
+    # -----------------------------
+    
+    "[selve.GW.service.setLED]":
+      - friendly-name: "LED mode"
+        friendly-values:
+          - "turn LED off"
+          - "turn LED on"
+
+
+    # -----------------------------
+    #          DEVICE
+    # -----------------------------
+
+    "[selve.GW.device.scanResult]":
+      - friendly-name: "status"
+        friendly-values: 
+          - "IDLE"
+          - "RUN"
+          - "VERIFY"
+          - "END_SUCCESS"
+          - "END_FAILED"
+      - friendly-name: "number of new devices"
+      - friendly-name: "device mask"
+
+    "[selve.GW.device.save]":
+      - friendly-name: "device ID"
+
+    "[selve.GW.device.getInfo]":
+      - friendly-name: "device ID"
+
+    "[selve.GW.device.getValues]":
+      - friendly-name: "device ID"
+    
+    "[selve.GW.device.setFunction]":
+      - friendly-name: "device ID"
+      - friendly-name: "function"
+        friendly-values:
+          - "SELECT"
+          - "INSTALL"
+          - "SENSOR"
+          - "MAN_PROG"
+          - "AUTO_PROG"
+          - "STORE_POSITION"
+          - "DRIVE_UP"
+          - "DRIVE_DOWN"
+          - "KEY_RELEASE"
+          - "DRIVE_STOP"
+      
+    "[selve.GW.device.setLabel]":
+      - friendly-name: "device ID"
+      - friendly-name: "name"
+
+    "[selve.GW.device.setType]":
+      - friendly-name: "device ID"
+      - friendly-name: "configuration"
+        friendly-values:
+          - "UNKNOWN"
+          - "SHUTTER"
+          - "JALOUSIE"
+          - "AWNING"
+          - "SWITCH_ACTUATOR"
+          - "DIMMER"
+          - "NIGHTLIGHT_ACTUATOR"
+          - "DAWNLIGHT_ACTUATOR"
+          - "HEATING"
+          - "REFRIGERATOR"
+          - "SWITCH_ACTUATOR_DAY"
+          - "GATEWAY"
+
+    "[selve.GW.device.delete]":
+      - friendly-name: "device ID"
+    
+    "[selve.GW.device.writeManual]":
+      - friendly-name: "device ID"
+      - friendly-name: "rf address"
+      - friendly-name: "name"
+      - friendly-name: "configuration"
+        friendly-values:
+          - "UNKNOWN"
+          - "SHUTTER"
+          - "JALOUSIE"
+          - "AWNING"
+          - "SWITCH_ACTUATOR"
+          - "DIMMER"
+          - "NIGHTLIGHT_ACTUATOR"
+          - "DAWNLIGHT_ACTUATOR"
+          - "HEATING"
+          - "REFRIGERATOR"
+          - "SWITCH_ACTUATOR_DAY"
+          - "GATEWAY"
+
+
+
+
+
+  
+  # ------------------------------
+  #       METHOD RESPONSES
+  # ------------------------------
+
+  method-responses:
+
+    # -----------------------------
+    #          SERVICE
+    # -----------------------------
+
+    "[selve.GW.service.getState]":
+      - friendly-name: "state"
+        friendly-values:
+          - "BOOTLOADER"
+          - "UPDATE"
+          - "START_UP"
+          - "READY"
+    
+    "[selve.GW.service.getVersion]":
+      - friendly-name: "firmware version part 1"
+      - friendly-name: "firmware version part 2"
+      - friendly-name: "firmware version part 3"
+      - friendly-name: "selve XML specification version part 1"
+      - friendly-name: "selve XML specification version part 2"
+      - friendly-name: "serial number"
+      - friendly-name: "revision"
+
+    "[selve.GW.service.reset]":
+      - friendly-name: "return"
+        friendly-values:
+          - "could not perform software reset"
+          - "software reset will be performed"
+    
+    "[selve.GW.service.factoryReset]":
+      - friendly-name: "return"
+        friendly-values:
+          - "factory reset could not be applied"
+          - "factory reset applied successfully"
+    
+    "[selve.GW.service.setLED]":
+      - friendly-name: "return"
+        friendly-values:
+          - "could not be applied"
+          - "sucessfullly applied"
+
+    "[selve.GW.service.getLED]":
+      - friendly-name: "LED mode"
+        friendly-values:
+          - "LED turned off"
+          - "LED turned on"
+
+
+
+    # -----------------------------
+    #          DEVICE
+    # -----------------------------
+
+    "[selve.GW.device.scanStart]":
+      - friendly-name: "return"
+        friendly-values:
+          - "could not start new scan"
+          - "successfully started new scan"
+
+    "[selve.GW.device.scanStop]":
+      - friendly-name: "return"
+        friendly-values:
+          - "an internal error occured"
+          - "stopped and cleared temp devices"
+
+    "[selve.GW.device.scanResult]":
+      - friendly-name: "status"
+        friendly-values: 
+          - "IDLE"
+          - "RUN"
+          - "VERIFY"
+          - "END_SUCCESS"
+          - "END_FAILED"
+      - friendly-name: "number of new devices"
+      - friendly-name: "device mask"
+
+    "[selve.GW.device.save]":
+      - friendly-name: "return"
+        friendly-values:
+          - "save failed"
+          - "save success"
+    
+    "[selve.GW.device.getIDs]":
+      - friendly-name: "used devices mask"
+
+    "[selve.GW.device.getInfo]":
+      - friendly-name: "device ID"
+      - friendly-name: "rf address"
+      - friendly-name: "device name"
+      - friendly-name: "configuration"
+        friendly-values:
+          - "UNKNOWN"
+          - "SHUTTER"
+          - "JALOUSIE"
+          - "AWNING"
+          - "SWITCH_ACTUATOR"
+          - "DIMMER"
+          - "NIGHTLIGHT_ACTUATOR"
+          - "DAWNLIGHT_ACTUATOR"
+          - "HEATING"
+          - "REFRIGERATOR"
+          - "SWITCH_ACTUATOR_DAY"
+          - "GATEWAY"
+      - friendly-name: "state"
+        friendly-values:
+          - "UNUSED"
+          - "USED"
+          - "TEMPORARILY_USED"
+          - "DELETED"
+  
+    "[selve.GW.device.getValues]":
+      - friendly-name: "device ID"
+      - friendly-name: "state"
+        friendly-values:
+          - "UNKNOWN"
+          - "STOPPED_OR_POWERED_OFF"
+          - "OPENING_OR_POWERED_ON"
+          - "CLOSING_OR_POWERED_ON"
+      - friendly-name: "position"
+      - friendly-name: "target position"
+      - friendly-name: "flags"
+      - friendly-name: "day mode"
+        friendly-values:
+          - "UNKNOWN MODE"
+          - "NIGHT"
+          - "DAWN"
+          - "DAY"
+          - "DUSK"
+      - friendly-name: "device name"
+
+    "[selve.GW.device.setFunction]":
+      - friendly-name: "return"
+        friendly-values:
+          - "function could not be called"
+          - "function was successfully called"
+
+    "[selve.GW.device.setLabel]":
+      - friendly-name: "return"
+        friendly-values:
+          - "could not be applied"
+          - "successfully applied"
+
+    "[selve.GW.device.setType]":
+      - friendly-name: "return"
+        friendly-values:
+          - "could not be applied"
+          - "successfully applied"
+
+    "[selve.GW.device.delete]":
+      - friendly-name: "return"
+        friendly-values:
+          - "could not be deleted"
+          - "successfully deleted"
+
+    "[selve.GW.device.writeManual]":
+      - friendly-name: "return"
+        friendly-values:
+          - "could not be applied"
+          - "successfully applied"
+
+  
