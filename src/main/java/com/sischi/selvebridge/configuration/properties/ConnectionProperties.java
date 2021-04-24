@@ -9,7 +9,7 @@ public class ConnectionProperties {
     
     private String serialPort;
     private int watchdogInterval = 60;
-    private int reconnectInterval = 15;
+    private int reconnectInterval = 30;
 
     public String getSerialPort() {
         return serialPort;

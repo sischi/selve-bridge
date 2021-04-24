@@ -19,7 +19,7 @@ selvebridge:
     watchdogInterval: 300
   connection:
     serialPort: /dev/ttyUSBX
-    reconnectInterval: 15
+    reconnectInterval: 30
     watchdogInterval: 60
   mqtt:
     enabled: false
@@ -31,4 +31,6 @@ selvebridge:
     topicPrefix: "selve"
     username: ""
     password: ""
+    reconnectInterval: 30
+    watchdogInterval: 60
     

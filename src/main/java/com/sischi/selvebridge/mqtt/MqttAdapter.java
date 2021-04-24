@@ -67,13 +67,13 @@ public class MqttAdapter implements HasLogger, ConnectionWatchdogHandler, Reconn
         // initialize reconnect thread
         reconnectThread = new ReconnectThread(
                 "mqtt-recon",
-                30,
+                mqttProperties.getReconnectInterval(),
                 this
             );
         // initialize connection watchdog
         connectionWatchdog = new ConnectionWatchdog(
                 "mqtt-watch",
-                60,
+                mqttProperties.getWatchdogInterval(),
                 this
             );
 

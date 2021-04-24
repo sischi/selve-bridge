@@ -10,11 +10,13 @@ public class MqttProperties {
     private String broker;
     private String protocol = "tcp";
     private Integer port = 1883;
-    private Integer qos = 0;
-    private Boolean retain = true;
+    private Integer qos = 1;
+    private Boolean retain = false;
     private String topicPrefix = "selve";
     private String username = null;
     private String password = null;
+    private int watchdogInterval = 60;
+    private int reconnectInterval = 30;
 
     public String getBroker() {
         return broker;
@@ -87,4 +89,21 @@ public class MqttProperties {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public int getWatchdogInterval() {
+        return watchdogInterval;
+    }
+
+    public void setWatchdogInterval(int watchdogInterval) {
+        this.watchdogInterval = watchdogInterval;
+    }
+
+    public int getReconnectInterval() {
+        return reconnectInterval;
+    }
+
+    public void setReconnectInterval(int reconnectInterval) {
+        this.reconnectInterval = reconnectInterval;
+    }
+
 }

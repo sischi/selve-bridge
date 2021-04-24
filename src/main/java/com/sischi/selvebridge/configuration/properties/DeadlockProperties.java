@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 public class DeadlockProperties {
     
     private int threshold = 60;
-    private int watchdogInterval = 30;
+    private int watchdogInterval = 300;
 
     public int getThreshold() {
         return threshold;

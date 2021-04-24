@@ -6,18 +6,18 @@ selvebridge:
   # deadlock watchdog properties
   deadlock:
     threshold: 60
-    watchdogInterval: 30
+    watchdogInterval: 300
 
   # configure the connection to the selve gateway
   connection:
     serialPort: /dev/selve-gateway
-    reconnectInterval: 15
+    reconnectInterval: 30
     watchdogInterval: 60
 
   # enable and configure the connection to an external mqtt broker
   mqtt:
     enabled: false
-    broker: mqtt.tset.de
+    broker: hostname
     protocol: tcp
     port: 1883
     qos: 0
@@ -25,6 +25,8 @@ selvebridge:
     topicPrefix: "selve"
     username: ""
     password: ""
+    reconnectInterval: 30
+    watchdogInterval: 60
 
 # specify the log level
 logging:

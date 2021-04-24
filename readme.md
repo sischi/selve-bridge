@@ -122,7 +122,7 @@ With these properties you can configure the connection to the selve gateway, tha
 name|type|default|description
 |-|-|-|-|
 SELVEBRIDGE_CONNECTION_SERIALPORT | string | "/dev/ttyUSB0" | the serial port where the selve rf USB stick (gateway) is connected
-SELVEBRIDGE_CONNECTION_RECONNECTINTERVAL | integer | 15 | seconds between two attempts to connect to the selve rf USB stick (gateway), if the connection is lost
+SELVEBRIDGE_CONNECTION_RECONNECTINTERVAL | integer | 30 | seconds between two attempts to connect to the selve rf USB stick (gateway), if the connection is lost
 SELVEBRIDGE_CONNECTION_WATCHDOGINTERVAL | integer | 60 | seconds between two checks for a valid connection of the selve rf USB stick (gateway), if the connection is established
 
 
@@ -133,7 +133,7 @@ Due to the limitations, that the gateway can only handle one command at a time, 
 name|type|default|description
 |-|-|-|-|
 SELVEBRIDGE_DEADLOCK_THRESHOLD | integer | 60 | seconds until a blocked gateway will be interpreted as a deadlock
-SELVEBRIDGE_DEADLOCK_WATCHDOGINTERVAL | integer | 30 | seconds between two checks for a possible deadlock
+SELVEBRIDGE_DEADLOCK_WATCHDOGINTERVAL | integer | 300 | seconds between two checks for a possible deadlock
 
 ## MQTT
 
@@ -150,7 +150,8 @@ SELVEBRIDGE_MQTT_RETAIN | boolean | false | whether the messages should be send 
 SELVEBRIDGE_MQTT_TOPICPREFIX | string | "selve" | the topic prefix applied to subscriptions and publications
 SELVEBRIDGE_MQTT_USERNAME | string | "" | the username used to authenticate against the mqtt broker
 SELVEBRIDGE_MQTT_PASSWORD | string | "" | the password used to authenticate against the mqtt broker
-
+SELVEBRIDGE_MQTT_RECONNECTINTERVAL | integer | 30 | seconds between two attempts to connect to the specified mqtt broker (if enabled), if the connection is lost
+SELVEBRIDGE_MQTT_WATCHDOGINTERVAL | integer | 60 | seconds between two checks for a valid connection to the specified mqtt broker (if enabled), after the connection is established
 
 
 # Setup
