@@ -94,6 +94,7 @@
                     <installProject>false</installProject>
                     <verbose>false</verbose>
                     <pushRemote>false</pushRemote>
+                    <fetchRemote>false</fetchRemote>
 
                     <gitFlowConfig>
                         <productionBranch>master</productionBranch>
