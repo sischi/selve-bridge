@@ -12,6 +12,8 @@ target/
 
 # generated folders
 selvebridge-*
+docker/app/selvebridge-*
 
+# testing
 docker/app/*.jar
-docker/app/selvebridge*
+application-parameter-info.yml
