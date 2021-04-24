@@ -214,8 +214,8 @@ public class CommeoMqttMessageListener implements HasLogger, IMqttMessageListene
 
     protected void handleDeviceStateChanged(SelveXmlMethodCall call) {
         getLogger().info("received device state changed event: '{}'", call.toString());
-        //CommeoDeviceState state = CommeoDeviceStateFactory.parseFromDeviceStateEvent(call);
-        //publishDeviceState(state);
+        CommeoDeviceState state = CommeoDeviceStateFactory.parseFromDeviceStateEvent(call);
+        publishDeviceState(state);
     }
     
 }
