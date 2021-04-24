@@ -1,7 +1,6 @@
 package com.sischi.selvebridge.mqtt;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.annotation.PostConstruct;

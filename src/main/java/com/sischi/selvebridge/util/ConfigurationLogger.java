@@ -26,7 +26,7 @@ public class ConfigurationLogger implements HasLogger {
         final MutablePropertySources sources = ((AbstractEnvironment) env).getPropertySources();
         StreamSupport.stream(sources.spliterator(), false)
                 .filter(ps -> ps instanceof EnumerablePropertySource)
-                .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
+                .map(ps -> ((EnumerablePropertySource<?>) ps).getPropertyNames())
                 .flatMap(Arrays::stream)
                 .distinct()
                 .filter(prop -> (PRINTABLE_PROPERTIES.contains(prop) || prop.toLowerCase().startsWith(APP_PROPERTY_PREFIX)))
