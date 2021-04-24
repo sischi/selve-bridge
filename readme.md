@@ -16,18 +16,20 @@ The Selve-Bridge provides two Interfaces to interact with:
 ## REST
 The REST interface provides endpoints for controlling devices known by the gateway and additional endpoints to control and setup the gateway and devices.
 
-*A REST API documentation will follow soon!*
+The API is described as OpenAPI documentation and can be found at the URL `/swagger-ui/` of the running application.
 
-**Caution:** Currently there is neither authentication nor SSL encryption implemented for the REST interface but it is planned to be added in the future.
+**Caution:** Currently there is neither authentication nor SSL encryption implemented for the REST interface but maybe this will be added in the future (if I have the time to implemet it).
 
 ## MQTT
 You can optionally enable the MQTT interface to connect the application to an external mqtt broker. Then you can use specific topics to interact with the devices that are known by the selve gateway.
 
 Currently only **commeo** devices, especially shutters, are supported. You can interact with them via the following topics:
-- `{topic-prefix}/commeo/{id}/cmnd`
+- `{topic-prefix}/commeo/device/{id}/cmnd`
     - you can publish to this topic to send commands to the device identified by the given id
-- `{topic-prefix}/commeo/{id}/state`
+- `{topic-prefix}/commeo/device/{id}/state`
     - you can subscribe to this topic to get informed about state changes of the device identified by the specified id
+- `{topic-prefix}/commeo/group/{id}/cmnd`
+    - you can publish to this topic to send commands to a group of devices that belongs to the given group id
 
 *A documentation of the JSON payloads will follow soon!*
 
@@ -73,20 +75,20 @@ You can run the latest version of this application on any server that runs Java 
 ```sh
 java -jar selve-bridge-<VERSION>.jar
 ```
-Alternatively you can simply run the shell script `start.sh` (you can find it in the foldeer `/docker/app`) with the *.jar* file of the desired version in the same folder.
+Alternatively you can simply run the shell script `start.sh` (you can find it in the folder `/docker/`) with the *.jar* file of the desired version in the `bin/` subfolder. Make sure that the `/docker/` is your working directory.
 
 ## docker
 you have multiple ways of running the selve-bridge application as a docker container.
 
 ## docker run script
-You can simply change to the `docker/app` folder and execute the `docker-run.sh` script, that will build the required docker image `adoptopenjdk-8` (a debian base image with the latest java 8 version of adoptopenjdk) and start the container. Maybe you have to edit the script to apply customization, e.g. you use another device name for the selve gateway.
+You can simply change to the `docker` folder and execute the `docker-run-selvebridge.sh` script, that will build the required docker image `selve-bridge:latest` (a debian base image with the latest java 8 version of adoptopenjdk) and start the container. Maybe you have to edit the script to apply customization, e.g. you use another device name for the selve gateway.
 
 ## docker-compose
 Another way to run this application is in a docker container. Then you can use a pre-compiled version of this application to be run with the provided docker-compose file. For this you need `docker` and `doker-compose` to be installed on the target system. Then all you need to do is to run for example
 ```sh
 docker-compose up
 ```
-from within the docker folder (`/docker`).
+from within the docker folder (`/docker`). Maybe you need to edit the docker-compose file to fit your needs and environment (e.g. modify the target selve-gateway device or change the port to be exposed).
 
 
 
@@ -95,7 +97,11 @@ from within the docker folder (`/docker`).
 
 For the application to work properly you have to configure it accordingly. Further you can tweak and customize the application to fit your needs. The configuration will be applied by providing the corresponding environment variables.
 
-Alternatively you can set these values by creating/editing the `application.yml` file in the `docker/app/config/` folder.
+Alternatively you can set these values by creating/editing the `application.yml` file in the `config/` folder, relative to the current working folder. An example with the default values set can be found in the `/docker/config/`
+
+## friendly parameter description
+
+- can be tweaked by adding/editing the file `config/application-parameter-info.yml`
 
 ## Connection
 
@@ -127,9 +133,12 @@ SELVEBRIDGE_MQTT_ENABLED | boolean | false | whether the MQTT interface should b
 SELVEBRIDGE_MQTT_BROKER | string | "hostname" | the hostname or IP address of the external mqtt broker
 SELVEBRIDGE_MQTT_PROTOCOL | string | "tcp" | the protocol used to connect to the broker
 SELVEBRIDGE_MQTT_PORT | integer | 1883 | the port used to connect to the broker
-SELVEBRIDGE_MQTT_QOS | integer | 0 | the quality of service the messages should be published
-SELVEBRIDGE_MQTT_RETAIN | boolean | true | whether the messages should be send with the retain flag set
+SELVEBRIDGE_MQTT_QOS | integer | 1 | the quality of service the messages should be published
+SELVEBRIDGE_MQTT_RETAIN | boolean | false | whether the messages should be send with the retain flag set
 SELVEBRIDGE_MQTT_TOPICPREFIX | string | "selve" | the topic prefix applied to subscriptions and publications
+SELVEBRIDGE_MQTT_USERNAME | string | "" | the username used to authenticate against the mqtt broker
+SELVEBRIDGE_MQTT_PASSWORD | string | "" | the password used to authenticate against the mqtt broker
+
 
 
 # Setup
@@ -145,17 +154,17 @@ Because this app offers a MQTT interface you can easily integrate your selve dev
 cover:
   - platform: mqtt
     name: "living room"
-    command_topic: "selve/commeo/0/cmnd"
-    position_topic: "selve/commeo/0/state"
-    set_position_topic: "selve/commeo/0/cmnd"
-    set_position_template: '{"command":"DRIVE_POS","value": {{ position }}}'
-    qos: 0
-    retain: true
+    command_topic: "selve/commeo/device/0/cmnd"
+    position_topic: "selve/commeo/device/0/state"
+    set_position_topic: "selve/commeo/device/0/cmnd"
+    set_position_template: '{"command":"DRIVE_POS","value": {{ 100 - position }}}'
+    qos: 1
+    retain: false
     payload_open: '{"command":"DRIVE_UP"}'
     payload_close: '{"command":"DRIVE_DOWN"}'
     payload_stop: '{"command":"STOP"}'
     position_open: 100
     position_closed: 0
     optimistic: false
-    value_template: '{{ value_json["position"] }}'
+    position_template: '{{ 100 - value_json["position"] }}'
 ```
