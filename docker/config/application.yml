@@ -17,14 +17,14 @@ selvebridge:
   # enable and configure the connection to an external mqtt broker
   mqtt:
     enabled: false
-    broker: hostname
+    broker: mqtt.tset.de
     protocol: tcp
     port: 1883
     qos: 0
     retain: true
     topicPrefix: "selve"
-    username: "user"
-    password: "pass"
+    username: ""
+    password: ""
 
 # specify the log level
 logging:

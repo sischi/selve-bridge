@@ -15,5 +15,4 @@ selvebridge-*
 docker/app/selvebridge-*
 
 # testing
-docker/app/*.jar
-application-parameter-info.yml
+/docker/bin/*.jar

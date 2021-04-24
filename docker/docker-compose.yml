@@ -3,8 +3,11 @@ version: "3.6"
 services:
   selvebridge:
     build: .
-    image: adoptopenjdk-8
+    image: selve-bridge:latest
     container_name: selve-bridge
+
+    environment:
+      - TZ=Europe/Berlin
 
     devices:
       - "/dev/ttyUSB0:/dev/ttyUSB0"
@@ -13,8 +16,6 @@ services:
       - "8080:8080"
     
     volumes:
-      - ./app:/app
-    
-    working_dir: /app
-    command: /app/start.sh
+      - ./bin:/selve-bridge/bin
+      - ./config:/selve-bridge/config
 
