@@ -1,3 +1,8 @@
+# DEPRECATED: Project moved!
+
+This repository is deprecated and will no longer be maintained!
+
+BUT: The "selve-bridge" is still alive! It has moved to [this](https://github.com/sischi/selve) repository, to be able to collect some more selve tools, like a Web-UI to be able to configure your shutters without the need of the selve desktop software.  
 
 
 # Selve-Bridge
